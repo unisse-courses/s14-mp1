@@ -3,5 +3,5 @@
 #Project Name: DLSU Profs to Pick 2.0
 #Team Members:
 *Cruz, Jolson Eric
-*Garcia Ryan
+*Garcia, Ryan Kyle M.
 *Santos Maria Joeme V.
