@@ -1,0 +1,42 @@
+// Variable Overrides
+
+$theme-colors:(
+    "primary": #00703c,
+);
+
+$body-bg: #ededed;
+
+.jumbotron{
+    background-color:#ffffff !important;
+    margin-top: 40px;
+}
+
+// Bootstrap SASS Files
+@import "node_modules/bootstrap/scss/bootstrap";
+
+// TODO: Add border to jumbotron
+
+.rounded-10{
+	border-radius:10px;
+}
+
+.bg-cover {
+    background-attachment: static;
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.bg-gradient {
+    background: linear-gradient(to right, #00703c, #00552e) 0 0 / cover;
+}
+
+.lighter-95{
+	color: #ffffff;
+	opacity: 95%;
+}
+
+.thead-green{
+	background-color: #00703c;
+	color: #ffffff;
+}
