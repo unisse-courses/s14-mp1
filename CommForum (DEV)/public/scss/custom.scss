@@ -1,0 +1,21 @@
+// Variable Overrides
+
+$theme-colors:(
+    "primary": #00703c,
+);
+
+$body-bg: #ededed;
+
+.jumbotron{
+    background-color:#ffffff !important;
+    margin-top: 40px;
+}
+
+// Bootstrap SASS Files
+@import "node_modules/bootstrap/scss/bootstrap";
+
+// TODO: Add border to jumbotron
+
+.rounded-10{
+	border-radius:10px;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>DLSU CommForum | {{title}}</title>
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  	<meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Start of CSS Imports -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,800">
+    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <!-- End of CSS Imports -->
+  </head>
+
+  <body>
+    {{>navbar}}
+    <div class="container">
+      {{>jumbotron}}
+    	{{{body}}}
+    </div>
+
+    <!-- Start of JS Imports -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- End of JS Imports -->
+  </body>
+</html>
