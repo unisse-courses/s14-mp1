@@ -13,7 +13,7 @@ app.engine('hbs',hbs({
 	partialsDir: __dirname + '/views/partials/'
 }));
 
-app.set('port', (process.env.PORT || 9090));
+app.set('port', (process.env.PORT || 3000));
 
 app.use(sassMiddleware({
     /* Options */
@@ -104,37 +104,67 @@ app.get('/colleges/cla', function(req, res){
 
 app.get('/colleges/cob', function(req, res){
 	res.render('colleges/cob',{
-		title: 'COB'
+		title: 'COB',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'College of Business',
+		jumbotronMessage: "The home of tomorrow's world leaders",
+		jumbotronBtn: 'View COB Professors',
+		jumbotronLink: 'colleges/cob/professors'
 	});
 });
 
 app.get('/colleges/coe', function(req, res){
 	res.render('colleges/coe',{
-		title: 'COE'
+		title: 'COE',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'College of Engineering',
+		jumbotronMessage: "The home of tomorrow's world leaders",
+		jumbotronBtn: 'View COE Professors',
+		jumbotronLink: 'colleges/coe/professors'
 	});
 });
 
 app.get('/colleges/ced', function(req, res){
 	res.render('colleges/ced',{
-		title: 'CED'
+		title: 'CED',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'College of Education',
+		jumbotronMessage: "The home of tomorrow's world leaders",
+		jumbotronBtn: 'View CED Professors',
+		jumbotronLink: 'colleges/ced/professors'
 	});
 });
 
 app.get('/colleges/ccs', function(req, res){
 	res.render('colleges/ccs',{
-		title: 'CCS'
+		title: 'CCS',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'College of Computer Studies',
+		jumbotronMessage: "The home of tomorrow's world leaders",
+		jumbotronBtn: 'View CCS Professors',
+		jumbotronLink: 'colleges/ccs/professors'
 	});
 });
 
 app.get('/colleges/cos', function(req, res){
 	res.render('colleges/cos',{
-		title: 'COS'
+		title: 'COS',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'College of Science',
+		jumbotronMessage: "The home of tomorrow's world leaders",
+		jumbotronBtn: 'View COS Professors',
+		jumbotronLink: 'colleges/cos/professors'
 	});
 });
 
 app.get('/colleges/soe', function(req, res){
 	res.render('colleges/soe',{
-		title: 'SOE'
+		title: 'SOE',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'School of Economics',
+		jumbotronMessage: "The home of tomorrow's world leaders",
+		jumbotronBtn: 'View SOE Professors',
+		jumbotronLink: 'colleges/soe/professors'
 	});
 });
 
@@ -144,6 +174,7 @@ app.listen(app.get('port'), function(){
 
 app.use(function (req, res, next) {
   res.status(404).render('error',{
+  	title: '404',
   	status: '404'
   });
 });
