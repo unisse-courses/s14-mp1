@@ -1,7 +1,7 @@
 {
-  "name": "CommForum",
+  "name": "commforum",
   "version": "1.0.0",
-  "description": "",
+  "description": "#Project Name: DLSU Profs to Pick 2.0 #Team Members: *Cruz, Jolson Eric *Garcia, Ryan Kyle M. *Santos Maria Joeme V.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,5 +18,13 @@
     "node-sass-middleware": "^0.11.0",
     "popper.js": "^1.16.1"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unisse-courses/s14-mp1.git"
+  },
+  "bugs": {
+    "url": "https://github.com/unisse-courses/s14-mp1/issues"
+  },
+  "homepage": "https://github.com/unisse-courses/s14-mp1#readme"
 }
