@@ -17,20 +17,19 @@
           <h5 class="card-title">{{this.profName}}</h5>
           {{#ifCond college "COB"}}
           <p>College of Business<br>
-          {{else}}{{#ifCond college "CLA"}}
+          {{/ifCond}}{{#ifCond college "CLA"}}
           <p>College of Liberal Arts<br>
-          {{else}}{{#ifCond college "COE"}}
+          {{/ifCond}}{{#ifCond college "COE"}}
           <p>College of Engineering<br>
-          {{else}}{{#ifCond college "COS"}}
+          {{/ifCond}}{{#ifCond college "COS"}}
           <p>College of Science<br>
-          {{else}}{{#ifCond college "CCS"}}
+          {{/ifCond}}{{#ifCond college "CCS"}}
           <p>College of Computer Studies<br>
-          {{else}}{{#ifCond college "CED"}}
+          {{/ifCond}}{{#ifCond college "CED"}}
           <p>College of Education<br>
-          {{else}}{{#ifCond college "SOE"}}
+          {{/ifCond}}{{#ifCond college "SOE"}}
           <p>School of Economics<br>
-          {{/ifCond}}{{/ifCond}}{{/ifCond}}{{/ifCond}}{{/ifCond}}{{/ifCond}}{{/ifCond}}
-          {{this.profCourse}}</p>
+          {{/ifCond}}{{this.profCourse}}</p>
           <a href="/professors/{{this.profNumber}}" class="card-link">View Profile</a>
         </div>
       </div>

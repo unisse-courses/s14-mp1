@@ -42,72 +42,46 @@ app.use(sassMiddleware({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
-	console.log(Math.round(Math.random() * 35));
-	console.log(Math.round(Math.random() * 35));
-	console.log(Math.round(Math.random() * 35));
-	res.render('home',{
-		title: 'Home',
-		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/home_header.jpg')",
-		jumbotronHeader: 'Welcome to CommForum',
-		jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-		jumbotronLink: '/colleges',
-		jumbotronBtn: 'View Colleges',
-		/* TODO: Feed variables below with dynamic data from database*/
-		/* TODO: Transform variables below to an array[3]*/
-		p1Name: 'Dr. Conrado Ruiz',
-		p1Image: '/assets/male_prof.png',
-		p1Desc: 'A fulltime professor teaching CCPROG1 from the College of Computer Studies',
-		p1Link: '/',
-		p2Name: 'Ms. Unisse Chua',
-		p2Image: '/assets/female_prof.png',
-		p2Desc: 'A fulltime professor teaching CCAPDEV from the College of Computer Studies',
-		p2Link: '/',
-		p3Name: 'Dr. Oliver Malabanan',
-		p3Image: '/assets/male_prof.png',
-		p3Desc: 'A fulltime professor teaching CCINFOM from the College of Computer Studies',
-		p3Link: '/'
-	});
+	mongoClient.connect(databaseURL, options, function(err, client) {
+	    if(err) throw err;
+	    const dbo = client.db(dbname);
+
+	    dbo.collection("professor").aggregate([{ $sample: { size: 3 } }]).toArray(function(err, result) {
+	      if(err) throw err;
+	  
+	      console.log("Read Successful!");
+	      client.close();
+	      res.render('home',{
+	      	quickView: result,
+			title: 'Home',
+			jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/home_header.jpg')",
+			jumbotronHeader: 'Welcome to CommForum',
+			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+			jumbotronLink: '/colleges',
+			jumbotronBtn: 'View Colleges'
+	      });
+	    });
+  	});
 });
 
 
 app.get('/colleges', function(req, res){
-	res.render('colleges',{
-		title: 'Colleges',
-		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
-		jumbotronHeader: 'Colleges',
-		jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-		jumbotronLink: '/professors',
-		jumbotronBtn: 'View Professors',
-		/* TODO: Transform variables below to an array[7]*/
-		c1Image: '/assets/cla.png',
-		c1Name: 'College of Liberal Arts',
-		c1Link: '/colleges/cla',
-		c1Caption: 'View CLA page',
-		c2Image: '/assets/cob.png',
-		c2Name: 'College of Business',
-		c2Link: '/colleges/cob',
-		c2Caption: 'View COB page',
-		c3Image: '/assets/coe.png',
-		c3Name: 'College of Engineering',
-		c3Link: '/colleges/coe',
-		c3Caption: 'View COE page',
-		c4Image: '/assets/ccs.png',
-		c4Name: 'College of Computer Studies',
-		c4Link: '/colleges/ccs',
-		c4Caption: 'View CCS page',
-		c5Image: '/assets/ced.png',
-		c5Name: 'College of Education',
-		c5Link: '/colleges/ced',
-		c5Caption: 'View CED page',
-		c6Image: '/assets/cos.png',
-		c6Name: 'College of Science',
-		c6Link: '/colleges/cos',
-		c6Caption: 'View COS page',
-		c7Image: '/assets/soe.png',
-		c7Name: 'School of Economics',
-		c7Link: '/colleges/soe',
-		c7Caption: 'View SOE page'
-	});
+	mongoClient.connect(databaseURL, options, function(err, client) {
+	    if(err) throw err;
+	    const dbo = client.db(dbname);
+
+	    dbo.collection("professor").distinct("college").then(function(result){
+	    	res.render('colleges',{
+	    		college: result,
+				title: 'Colleges',
+				jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+				jumbotronHeader: 'Colleges',
+				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronLink: '/professors',
+				jumbotronBtn: 'View Professors'
+			});
+	    });
+  	});
 });
 
 app.get('/colleges/cla', function(req, res){
@@ -383,9 +357,20 @@ app.get('/professors', function(req, res){
 	        professor: result,
 	      });
 	    });
-	    // More stuff to go here ...
   });
 });
+
+app.get('/profile', function(req, res){
+	res.render('profile',{
+		title: 'Profile',
+		jumbotronCustom: "background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.9) 100%), url('/assets/college_header.jpg')",
+		jumbotronHeader: 'Hello Jolson,' ,
+		jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
+		jumbotronBtn: 'Back to Homepage',
+		jumbotronLink: '/'
+	});
+});
+
 
 app.listen(app.get('port'), function(){
 	console.log('Server started on port ' + app.get('port'));
