@@ -11,41 +11,39 @@
   </div>
 </div>
 
-<div class="row">
-  <!-- TODO: Transform repetitve code below into an EACH -->
-  <div class="col-sm-12 col-md-4">
-    <div class="card mb-4">
-      <div class="card-body text-center">
-        <img src="{{p1Image}}" width="100" height="100" class="d-inline-block align-top mb-1" alt="{{p1Name}}">
-        <h5 class="card-title">{{p1Name}}</h5>
-        <p class="card-text">{{p1Desc}}</p>
-        <a href="{{p1Link}}" class="card-link">View profile</a>
+{{#if quickView}}
+  <div class="row">
+    {{#each quickView}}
+      <div class="col-sm-12 col-md-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            <img src="/assets/{{gender}}_prof.png" width="100" height="100" class="d-inline-block align-top mb-1" alt="{{profName}}">
+            <h5 class="card-title">{{profName}}</h5>
+            <p class="card-text">A lasallian professor teaching {{profCourse}} from the 
+              {{#ifCond college "COB"}}
+              College of Business.
+              {{/ifCond}}{{#ifCond college "CLA"}}
+              College of Liberal Arts.
+              {{/ifCond}}{{#ifCond college "COE"}}
+              College of Engineering.
+              {{/ifCond}}{{#ifCond college "COS"}}
+              College of Science.
+              {{/ifCond}}{{#ifCond college "CCS"}}
+              College of Computer Studies.
+              {{/ifCond}}{{#ifCond college "CED"}}
+              College of Education.
+              {{/ifCond}}{{#ifCond college "SOE"}}
+              School of Economics.
+              {{/ifCond}}</p>
+            <a href="/professors/{{profNumber}}" class="card-link">View profile</a>
+          </div>
+        </div>
       </div>
-    </div>
+    {{/each}}
   </div>
-
-  <div class="col-sm-12 col-md-4">
-    <div class="card mb-4">
-      <div class="card-body text-center">
-        <img src="{{p2Image}}" width="100" height="100" class="d-inline-block align-top mb-1" alt="{{p2Name}}">
-        <h5 class="card-title">{{p2Name}}</h5>
-        <p class="card-text">{{p2Desc}}</p>
-        <a href="{{p2Link}}" class="card-link">View profile</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-sm-12 col-md-4">
-    <div class="card mb-4">
-      <div class="card-body text-center">
-        <img src="{{p3Image}}" width="100" height="100" class="d-inline-block align-top mb-1" alt="{{p3Name}}">
-        <h5 class="card-title">{{p3Name}}</h5>
-        <p class="card-text">{{p3Desc}}</p>
-        <a href="{{p3Link}}" class="card-link">View Profile</a>
-      </div>
-    </div>
-  </div>
-</div>
+{{else}}
+  <p>No professors yet</p>
+{{/if}}
 
 <div class="row mt-sm-4 mt-md-0">
 
