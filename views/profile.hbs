@@ -1,1 +1,42 @@
 {{>jumbotron}}
+
+<div class="row mt-sm-4 mt-md-0">
+	<div class="col-sm-12 col-md-8">
+    	<h3>Most Recent Reviews</h3>
+    	{{#if reviews}}
+    	{{#each reviews}}
+    	{{/each}}
+    	{{else}}
+    	<p>You have not posted any review yet.</p>
+    	<a href="/#quickReview">Submit your first review!</a>
+    	{{/if}}
+    </div>
+
+    <div class="col-sm-12 col-md-4">
+    	<div class="card mb-4">
+    		<div class="card-header bg-gradient font-weight-bold">
+    			<!-- REPLACE WITH ACTUAL USER ID -->
+    			ID Number: 11712074
+  			</div>
+	      	<div class="card-body">
+		      	<form>
+		        	<div class="form-group row">
+		            	<label for="changePassword" class="col-sm-4 col-form-label">Current Password</label>
+		            	<input type="password" class="form-control col-sm-7 mt-2" placeholder="Current Password"> 
+		        	</div>
+		          	<div class="form-group row">
+		          		<label for="changePassword" class="col-sm-4 col-form-label">New Password</label>
+		          		<input type="password" class="form-control col-sm-7 mt-2" placeholder="New Password"> 
+		       	  	</div>
+		          	<div class="form-group row">
+		            	<label for="changePassword" class="col-sm-4 col-form-label">Confirm Password</label>
+		            	<input type="password" class="form-control col-sm-7 mt-2" placeholder="Confirm Password"> 
+		          	</div>
+		          	<div class="text-center">
+		            	<button type="submit" class="btn btn-primary mt-0 mb-2">Change Password</button>
+		          	</div>
+		    	</form>
+	    	</div>
+		</div>
+	</div>
+</div>
