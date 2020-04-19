@@ -23,7 +23,7 @@ var collegeSchema = new Schema({
 	},
 	aboutUs: {type: Array},
 	visionMission: {type: String},
-	coreValue: {type: String},
+	coreValues: {type: String},
 	goals: {type: String},
 	founderBio: {type: String},
 	philosophy: {type: String},

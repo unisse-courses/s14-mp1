@@ -11,6 +11,7 @@ var mongoose = require('mongoose');
 const collegeModel = require('./models/college');
 const professorModel = require('./models/professor');
 const userModel = require('./models/user');
+const reviewModel = require('./models/review');
 
 //Environments Configuration
 app.set('view engine', 'hbs');
@@ -41,25 +42,39 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Route Definition
 app.get('/', function(req, res){
  	professorModel.aggregate([{ $sample: { size: 3 } }]).then(function(qvProfs) {
-	    res.render('home',{
-	    	data: qvProfs,
-			title: 'Home',
-			jumbotronImage: '/assets/home_header.jpg',
-			jumbotronHeader: 'Welcome to CommForum',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/colleges',
-			jumbotronBtn: 'View Colleges'
-	    });
+ 		reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).limit(10).exec(function(err,mostRecent) {
+ 			var reviews = [];
+
+ 			mostRecent.forEach(function(document){
+				reviews.push(document.toObject());
+			});
+
+ 			res.render('home',{
+		    	data: qvProfs,
+		    	review: reviews,
+				title: 'Home',
+				jumbotronImage: '/assets/headers/home_header.jpg',
+				jumbotronHeader: 'Welcome to CommForum',
+				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronLink: '/colleges',
+				jumbotronBtn: 'View Colleges'
+		    });
+ 		});
 	});
 });
 
-
 app.get('/colleges', function(req, res){
-	professorModel.distinct("college").then(function(colleges){
+	collegeModel.find({}).exec(function(err, result){
+		var collegeObjects = [];
+
+		result.forEach(function(document){
+			collegeObjects.push(document.toObject());
+		});
+
 	  	res.render('colleges',{
-	  		data: colleges,
+	  		data: collegeObjects,
 			title: 'Colleges',
-			jumbotronImage: '/assets/college_header.jpg',
+			jumbotronImage: '/assets/headers/college_header.jpg',
 			jumbotronHeader: 'Colleges',
 			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
 			jumbotronLink: '/professors',
@@ -68,257 +83,168 @@ app.get('/colleges', function(req, res){
 	});
 });
 
-/*
-app.get('/professors/:id', function(req, res){
-	const profId = req.params.id;
-	console.log(profId);
-
-	res.render('profpage',{
-		title: 'profId'
-	});
-});
-*/
-
 app.get('/colleges/:college', function(req, res){
 	const link = req.params.college.toUpperCase();
 
-	collegeModel.find({shortName: link}, function(err, college) {
-		if(college.length === 0){
+	collegeModel.findOne({shortName: link}, function(err, college) {
+		if(college === null){
 			res.render('error',{
 				title: '404',
   				status: '404'
 			});
 		}
 		else{
-			res.render('colleges/'+ link,{
-				title: link.toUpperCase(),
+			res.render('colpage',{
+				college: college.toObject(),
+				jumbotronImage: '/assets/headers/colpage_header.jpg',
+				jumbotronHeader: college.longName,
+				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronLink: '/colleges/' + college.shortName + '/professors',
+				jumbotronBtn: 'View ' + college.shortName + ' Professors',
+				title: link
 			});
 		}
 	});
 });
 
-/*
-app.get('/colleges/cla/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
+app.get('/colleges/:college/professors', function(req, res){
+	const link = req.params.college.toUpperCase();
 
-	    dbo.collection("professor").find({college: "CLA"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'CLA Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
-});
+	professorModel.find({college: link}).exec(function(err, result){
+		var professorObject = [];
 
-*/
+		result.forEach(function(document){
+			professorObject.push(document.toObject());
+		});
 
-app.get('/colleges/cob/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
-
-	    dbo.collection("professor").find({college: "COB"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'COB Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
-});
-
-app.get('/colleges/coe/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
-
-	    dbo.collection("professor").find({college: "COE"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'COE Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
-});
-
-app.get('/colleges/ced/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
-
-	    dbo.collection("professor").find({college: "CED"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'CED Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
-});
-
-app.get('/colleges/ccs/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
-
-	    dbo.collection("professor").find({college: "CCS"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'CCS Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
-});
-
-app.get('/colleges/cos/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
-
-	    dbo.collection("professor").find({college: "COS"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'COS Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
-});
-
-app.get('/colleges/soe/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
-
-	    dbo.collection("professor").find({college: "SOE"}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	special: true,
-	      	title: 'SOE Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
+		if(professorObject.length === 0){
+			res.render('error',{
+				title: '404',
+  				status: '404'
+			});
+		}
+		else{
+			res.render('professors',{
+				professor: professorObject,
+				title: link + ' Professors',
+		      	jumbotronImage: '/assets/headers/colpage_header.jpg',
+				jumbotronHeader: link + ' Professors',
+				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronLink: '/',
+				jumbotronBtn: 'Back to Homepage',
+			});
+		}
+	});
 });
 
 app.get('/professors', function(req, res){
-	mongoClient.connect(databaseURL, options, function(err, client) {
-	    if(err) throw err;
-	    // Connect to the same database
-	    const dbo = client.db(dbname);
+	professorModel.find({}, null, {sort: {profName: 1}}).exec(function(err, result){
+		var professorObject = [];
 
-	    dbo.collection("professor").find({}).toArray(function(err, result) {
-	      if(err) throw err;
-	  
-	      console.log("Read Successful!");
-	      client.close();
-	      res.render('professors', {
-	      	title: 'Professors',
-	      	jumbotronImage: '/assets/college_header.jpg',
-			jumbotronHeader: 'Professors',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-			jumbotronLink: '/',
-			jumbotronBtn: 'Back to Homepage',
-	        professor: result,
-	      });
-	    });
-  	});
+		result.forEach(function(document){
+			professorObject.push(document.toObject());
+		});
+
+		if(professorObject.length === 0){
+			res.render('error',{
+				title: '404',
+  				status: '404'
+			});
+		}
+		else{
+			res.render('professors',{
+				professor: professorObject,
+				title: 'Professors',
+		      	jumbotronImage: '/assets/headers/colpage_header.jpg',
+				jumbotronHeader: 'Professors',
+				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronLink: '/',
+				jumbotronBtn: 'Back to Homepage',
+			});
+		}
+	});
 });
 
 app.get('/professors/:id', function(req, res){
-	const profId = req.params.id;
-	console.log(profId);
+	const link = req.params.id;
 
-	res.render('profpage',{
-		title: 'profId'
+	professorModel.findOne({profNumber: link}, function(err, professor) {
+		if(professor === null){
+			res.render('error',{
+				title: '404',
+	  			status: '404'
+			});
+		}
+		else{
+			var profData = professor.toObject();
+			reviewModel.find({profRef: profData._id}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result) {
+	 			var reviews = [];
+
+	 			result.forEach(function(document){
+					reviews.push(document.toObject());
+				});
+
+				collegeModel.findOne({shortName: profData.college}, function(err,college) {
+					res.render('profpage',{
+						professor: profData,
+						college: college.toObject(),
+						reviews: reviews,
+						jumbotronImage: '/assets/headers/profpage_header.jpg',
+						jumbotronHeader: profData.profName,
+						jumbotronMessage: 'An exemplary Lasallian educator who teach minds, touch hearts, and transform lives by diligently teaching ' + profData.profCourse + ' from the ' + college.longName + '.',
+						jumbotronLink: '/',
+						jumbotronBtn: 'Back to Homepage',
+						title: profData.profName
+					});
+				});
+ 			});
+		}
 	});
+});
+
+app.get('/reviews/testLimit', function(req,res){
+	reviewModel.find({}).sort({_id:-1}).limit(10).exec(function(err,result){
+		
+	});
+});
+
+app.get('/reviews/:id', function(req,res){
+	const link = req.params.id;
+
+	reviewModel.findOne({_id: link}).populate('profRef').populate('studentRef').exec(function(err, review){
+		if(review === null){
+			res.render('error',{
+				title: '404',
+	  			status: '404'
+			});
+		}
+		else{
+			collegeModel.findOne({shortName: review.profRef.college}, function(err,college) {
+				res.render('revpage', {
+					college: college.toObject(),
+					review: review.toObject(),
+					title: "Review on " + review.profRef.profName,
+					jumbotronImage: '/assets/headers/profpage_header.jpg',
+					jumbotronHeader: review.profRef.profName,
+					jumbotronMessage: 'An exemplary Lasallian educator who teach minds, touch hearts, and transform lives by diligently teaching ' + review.profRef.profCourse + ' from the ' + college.longName + '.',
+					jumbotronLink: '/',
+					jumbotronBtn: 'Back to Homepage'
+				});
+			});
+		}
+	}); 
 });
 
 app.get('/profile', function(req, res){
 	res.render('profile',{
 		title: 'Profile',
-		jumbotronImage: '/assets/home_header.jpg',
+		jumbotronImage: '/assets/headers/user_header.jpg',
 		jumbotronHeader: 'Hello Jolson,' ,
 		jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
 		jumbotronBtn: 'Back to Homepage',
 		jumbotronLink: '/'
 	});
 });
-
 
 app.listen(app.get('port'), function(){
 	console.log('Server started on port ' + app.get('port'));
@@ -337,3 +263,28 @@ app.use(function (req, res, next) {
   	status: '500'
   });
 });
+
+//Testers
+
+/*
+app.get('/professors/addOne', function(req, res){
+	var prof = new professorModel({
+		college: "CLA",
+		gender: "Male",
+		profAge: "Mark Anthony Dacela",
+		profCourse: "GEETHIC"
+  	});
+
+  	prof.save(function(err, res) {
+    	console.log(prof);
+	});
+});
+*/
+
+/*
+app.get('/professors/testSort', function(req,res){
+	userModel.find({}, null, {sort: {_id: -1}}).exec(function(err,result){
+		console.log(result);
+	});
+});
+*/

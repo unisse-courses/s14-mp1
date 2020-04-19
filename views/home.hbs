@@ -52,7 +52,7 @@
     <table class="table table-hover table-light mb-5">
     <thead class="thead-green">
       <tr>
-        <th scope="col">RN#</th>
+        <th scope="col"></th>
         <th scope="col">Professor</th>
         <th scope="col">Course</th>
         <th scope="col">Reviewer</th>
@@ -60,76 +60,15 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">01</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">02</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">03</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">04</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">05</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">06</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">07</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">08</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">09</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
-      <tr>
-        <th scope="row">10</th>
-        <td>Dr. John Doe</td>
-        <td>CCAPDEV</td>
-        <td>Jolson Cruz</td>
-        <td class="text-center"><a class="btn btn-primary btn-sm text-white">Go to Review</a></td>
-      </tr>
+      {{#each review}}
+        <tr>
+          <th scope="row"></th>
+          <td>{{this.profRef.profName}}</td>
+          <td>{{this.profCourse}}</td>
+          <td>{{this.studentRef.studentName}}</td>
+          <td class="text-center"><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Review</a></td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
   </div>
