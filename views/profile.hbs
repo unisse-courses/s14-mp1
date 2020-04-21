@@ -2,14 +2,30 @@
 
 <div class="row mt-sm-4 mt-md-0">
 	<div class="col-sm-12 col-md-8">
-    	<h3>Most Recent Reviews</h3>
-    	{{#if reviews}}
-    	{{#each reviews}}
-    	{{/each}}
-    	{{else}}
-    	<p>You have not posted any review yet.</p>
-    	<a href="/#quickReview">Submit your first review!</a>
-    	{{/if}}
+    	<table class="table table-hover table-light mb-5">
+			<thead class="thead-green">
+			    <tr>
+			       	<th scope="col"></th>
+			       	<th scope="col">Review</th>
+			       	<th scope="col">Course</th>
+			       	<th scope="col">Reviewer</th>
+			       	<th scope="col" class="text-center">Action</th>
+		    	</tr>
+			</thead>
+		    <tbody>
+			    {{#each reviews}}
+					<tr>
+				      	<th scope="row"></th>
+				  	    <td>
+				  	  		<span class="d-inline-block text-truncate" style="max-width: 200px;">{{this.reviewContent}}</span>
+				  	    </td>
+				      	<td>{{this.profCourse}}</td>
+				       	<td>{{this.studentRef.studentName}}</td>
+				       	<td class="text-center"><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Review</a></td>
+			    	</tr>
+		      	{{/each}}
+			</tbody>
+		</table>
     </div>
 
     <div class="col-sm-12 col-md-4">

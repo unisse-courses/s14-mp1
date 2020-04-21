@@ -14,12 +14,12 @@ const options = {
 mongoose.connect(databaseURL, options);
 
 var reviewSchema = new Schema({
-	profRef: {type: ObjectId, ref: 'professor'},
-	profNumber: {type: Int32},
-	profCourse: {type: String},
-	studentRef: {type: ObjectId, ref: 'user'},
-	studentId: {type: Int32},
-	reviewContent: {type: String}
+	profRef: {type: ObjectId, ref: 'professor', required: true},
+	profNumber: {type: Int32, required: true},
+	profCourse: {type: String, required: true},
+	studentRef: {type: ObjectId, ref: 'user', required: true},
+	studentId: {type: Int32, required: true},
+	reviewContent: {type: String, required: true}
 });
 
 module.exports = mongoose.model('review', reviewSchema);

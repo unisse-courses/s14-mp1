@@ -6,6 +6,7 @@ var path = require('path');
 var hbs = require('express-handlebars');
 var app = express();
 var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 //Import Models
 const collegeModel = require('./models/college');
@@ -39,27 +40,39 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Configuration for handling API endpoint data
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
 //Route Definition
 app.get('/', function(req, res){
  	professorModel.aggregate([{ $sample: { size: 3 } }]).then(function(qvProfs) {
  		reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).limit(10).exec(function(err,mostRecent) {
- 			var reviews = [];
+ 			collegeModel.find({}).exec(function(err, col){
+				var colleges = [];
+				var reviews = [];
 
- 			mostRecent.forEach(function(document){
-				reviews.push(document.toObject());
-			});
+				col.forEach(function(document){
+					colleges.push(document.toObject());
+				});
 
- 			res.render('home',{
-		    	data: qvProfs,
-		    	review: reviews,
-				title: 'Home',
-				jumbotronImage: '/assets/headers/home_header.jpg',
-				jumbotronHeader: 'Welcome to CommForum',
-				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
-				jumbotronLink: '/colleges',
-				jumbotronBtn: 'View Colleges'
-		    });
- 		});
+	 			mostRecent.forEach(function(document){
+					reviews.push(document.toObject());
+				});
+
+				res.render('home',{
+					colleges: colleges,
+			    	data: qvProfs,
+			    	review: reviews,
+					title: 'Home',
+					jumbotronImage: '/assets/headers/home_header.jpg',
+					jumbotronHeader: 'Welcome to CommForum',
+					jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+					jumbotronLink: '/colleges',
+					jumbotronBtn: 'View Colleges'
+		    	});
+ 			});
+		});
 	});
 });
 
@@ -202,11 +215,42 @@ app.get('/professors/:id', function(req, res){
 	});
 });
 
-app.get('/reviews/testLimit', function(req,res){
-	reviewModel.find({}).sort({_id:-1}).limit(10).exec(function(err,result){
-		
-	});
+//IN
+
+app.post('/addReview', function(req, res) {
+  //console.log(req.body);
+
+  var newReview = new reviewModel({
+  	profRef: req.body.profRef,
+    profName: req.body.profName,
+    profNumber: req.body.profNumber,
+    profCourse: req.body.profCourse,
+    studentRef: req.body.studentRef,
+    studentId: req.body.studentId,
+    reviewContent: req.body.reviewContent,
+  });
+
+  newReview.save(function(err, review) {
+    var result;
+
+    if (err) {
+      console.log(err.errors);
+
+      result = { success: false, message: "Review was not created!" }
+      res.send(result);
+    } else {
+      console.log("Successfully added review!");
+      console.log(review);
+
+      result = { success: true, message: "Review created!" }
+
+      res.send(result);
+    }
+
+  });
 });
+
+//OUT
 
 app.get('/reviews/:id', function(req,res){
 	const link = req.params.id;
@@ -236,13 +280,22 @@ app.get('/reviews/:id', function(req,res){
 });
 
 app.get('/profile', function(req, res){
-	res.render('profile',{
-		title: 'Profile',
-		jumbotronImage: '/assets/headers/user_header.jpg',
-		jumbotronHeader: 'Hello Jolson,' ,
-		jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
-		jumbotronBtn: 'Back to Homepage',
-		jumbotronLink: '/'
+	reviewModel.find({studentId: 11712074}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result) {
+	 	var reviews = [];
+
+		result.forEach(function(document){
+			reviews.push(document.toObject());
+		});
+
+		res.render('profile',{
+			reviews: reviews,
+			title: 'Profile',
+			jumbotronImage: '/assets/headers/user_header.jpg',
+			jumbotronHeader: 'Hello Jolson,' ,
+			jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
+			jumbotronBtn: 'Back to Homepage',
+			jumbotronLink: '/'
+		});
 	});
 });
 
