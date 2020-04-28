@@ -15,9 +15,9 @@
 	    	<!--
 	    	<div class="card-body commentPane">
 				<p class="mb-0">{{review.reviewContent}}</p>
-				<p>Submitted by <cite title="Source Title">{{student.studentName}}</cite></p>
+				<p>Submitted by <cite title="Source Title">{{studentRef.studentName}}</cite></p>
 	    	</div>
-	    	!-->
+	    	-->
 		</div>
     </div>
 
@@ -42,10 +42,10 @@
 			        </div>
 		          	<div class="form-group row">
 			            <label for="quickRev" class="col-sm-4 col-form-label">Comment</label>
-			            <textarea class="form-control col-sm-7" id="exampleFormControlTextarea1" rows="3"></textarea>
+			            <textarea id = "commentcont" class="form-control col-sm-7" id="exampleFormControlTextarea1" rows="3"></textarea>
 			        </div>
 			        <div class="text-center">
-			            <button type="submit" class="btn btn-primary mt-0 mb-2">Post Comment</button>
+			            <button type="submit" id = "commentBtn" class="btn btn-primary mt-0 mb-2">Post Comment</button>
 			        </div>
 		    	</form>
 	    	</div>

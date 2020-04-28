@@ -33,4 +33,31 @@ $(document).ready(function() {
 
     });
   });
+  
+  $('#quickCollege').change(function() {
+    var selectedCollege = $(this).children("option").filter(":selected").val();
+    var course = document.getElementById('quickCourse');
+    var prof = document.getElementById('quickProf');
+    var courseItem = "<option hidden disabled selected value>Choose...</option>";
+    prof.innerHTML = courseItem;
+    $.get('/getCourseByCollege', selectedCollege, function(data, status) {
+      $.each(data, function(index, value){
+        courseItem += "<option>" + value + "</option>";
+      });
+      course.innerHTML = courseItem;
+    });
+});
+  
+$("#quickCourse").change(function() {
+    var selectedCourse = $(this).children("option").filter(":selected").val();
+    var prof = document.getElementById('quickProf');
+    var profItem = "<option hidden disabled selected value>Choose...</option>";
+  
+    $.get('/getProfByCourse', selectedCourse, function(data, status) {
+      $.each(data, function(index, value){
+        profItem += "<option>" + value + "</option>";
+      });
+      prof.innerHTML = profItem;
+    });
+  });
 });

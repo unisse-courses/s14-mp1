@@ -299,6 +299,22 @@ app.get('/profile', function(req, res){
 	});
 });
 
+app.get('/getCourseByCollege', function(req, res) {
+	var selectedCollege = req._parsedUrl.query;
+		
+	professorModel.find({ college: selectedCollege }).distinct('profCourse', function(err, result) {
+		res.send(result);
+	});
+});
+	
+app.get('/getProfByCourse', function(req, res) {
+	var selectedCourse = req._parsedUrl.query;
+	
+	professorModel.find({ profCourse: selectedCourse }).distinct('profName', function(err, result) {
+		res.send(result);
+	});
+});
+
 app.listen(app.get('port'), function(){
 	console.log('Server started on port ' + app.get('port'));
 });
