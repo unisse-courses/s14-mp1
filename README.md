@@ -32,7 +32,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 
 - Mandatory user registration.
 - Community administrators, moderators, and contributors.
-- Anti-discriminatory community guidelines (no cursing, etc). <sup>[1](#fn1)</sup>
+- Anti-discriminatory community guidelines (no cursing, etc). <sup>[[1]](#fn1)</sup>
 
 ## Security 
 
@@ -41,8 +41,8 @@ The web application is anchored towards four key indicators: Security, Simplicit
 -   Convenient log in - log out navigation.
 -   Convenient changing of password.
 -   Convenient post sectioning (college, course, professor).
--   Convenient post and comment management. <sup>[1](#fn1)</sup>
--   Convenient prof searching and filtering. <sup>[1](#fn1)</sup>
+-   Convenient post and comment management. <sup>[[1]](#fn1)</sup>
+-   Convenient prof searching and filtering. <sup>[[1]](#fn1)</sup>
 -   College sorted professors.
 
 ## Reliability
@@ -72,7 +72,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 - See All Professors
   - A user can view all professors with the following information such as name, courses, and college.
 
-- Search Professors/Subjects <sup>[1](#fn1)</sup>
+- Search Professors/Subjects <sup>[[1]](#fn1)</sup>
   - A user can search for a certain professor by their name and/or subject that will show the matched post subject forum post and/or professor information. 
 
 - See Most Recent Reviews
