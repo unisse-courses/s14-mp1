@@ -1,26 +1,11 @@
-# s14-mp1
+# Welcome to DLSU CommForum!
 
-#Project Name: DLSU Profs to Pick 2.0
-#Team Members:
-*Cruz, Jolson Eric
-*Garcia, Ryan Kyle M.
-*Santos Maria Joeme V.
+This online platform aims to address all the concerns, judgment, and comments made by the students and alumni while maintaining a healthy and non-toxic environment in which the Lasallian Core Values are portrayed. To run the web program, simply follow the instructions found **below**.
+
+This Machine Project was made by **Jolson Cruz**, **Ryan Garcia**, and **Joeme Santos** from **CCAPDEV S14**. 
 
 
-#Clone
-- Clone or Download File the repo to your local machine
+# Status
 
-
-#SetUP
-- In Terminal/Cmd
-  - install browser packages: type npm install 
-  - type node index.js
-
-#Open browser with the link localhost:3000/
-
-
-
-
-
-
+This project is still **under development** and will be constantly updated once it's ready for **live implementation**.
 

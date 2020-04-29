@@ -67,7 +67,7 @@ app.get('/', function(req, res){
 					title: 'Home',
 					jumbotronImage: '/assets/headers/home_header.jpg',
 					jumbotronHeader: 'Welcome to CommForum',
-					jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+					jumbotronMessage: 'This online platform aims to address all the concerns, judgment, and comments made by the students and alumni while maintaining a healthy and non-toxic environment in which the Lasallian Core Values are portrayed.',
 					jumbotronLink: '/colleges',
 					jumbotronBtn: 'View Colleges'
 		    	});
@@ -89,7 +89,7 @@ app.get('/colleges', function(req, res){
 			title: 'Colleges',
 			jumbotronImage: '/assets/headers/college_header.jpg',
 			jumbotronHeader: 'Colleges',
-			jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+			jumbotronMessage: 'De La Salle University has 7 Colleges with different specializations in which aims to hone the skills of diverse individuals in their track. These Colleges are each catered to developing the interior and exterior knowledge needed by an individual to be a fully-pledged Lasallian leader.',
 			jumbotronLink: '/professors',
 			jumbotronBtn: 'View Professors'
 		});
@@ -111,7 +111,7 @@ app.get('/colleges/:college', function(req, res){
 				college: college.toObject(),
 				jumbotronImage: '/assets/headers/colpage_header.jpg',
 				jumbotronHeader: college.longName,
-				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronMessage: 'The ' + college.longName +' offers different degree programs in which aim to hone the skills of each individual and help them articulate the knowledge being dealt with them while striving to apply the Lasallian Core Values, which will resemble the breeding ground for the future Lasallian leaders.',
 				jumbotronLink: '/colleges/' + college.shortName + '/professors',
 				jumbotronBtn: 'View ' + college.shortName + ' Professors',
 				title: link
@@ -142,7 +142,7 @@ app.get('/colleges/:college/professors', function(req, res){
 				title: link + ' Professors',
 		      	jumbotronImage: '/assets/headers/colpage_header.jpg',
 				jumbotronHeader: link + ' Professors',
-				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronMessage: 'The College of Liberal Arts has professors that promise to share all their knowledge and tools to effectively aid students in being graduates of their desired programs while embodying the Lasallian Core Values.',
 				jumbotronLink: '/',
 				jumbotronBtn: 'Back to Homepage',
 			});
@@ -170,7 +170,7 @@ app.get('/professors', function(req, res){
 				title: 'Professors',
 		      	jumbotronImage: '/assets/headers/colpage_header.jpg',
 				jumbotronHeader: 'Professors',
-				jumbotronMessage: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut perspiciatis maxime veniam facere, libero ducimus in nostrum. Nam quam aliquam eos amet, error enim iste a facilis minima voluptatum quo!',
+				jumbotronMessage: 'The Professors of De La Salle University aims to provide all the students with the necessary learning tools in obtaining knowledge to maximize all the skills and talents one must possess before being deployed to their chosen careers.',
 				jumbotronLink: '/',
 				jumbotronBtn: 'Back to Homepage',
 			});
