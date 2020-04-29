@@ -7,9 +7,20 @@
 *Santos Maria Joeme V.
 
 
-#Installing
-*Clone or Download File
-*In Terminal/Cmd, type npm install then node index.js
-*In Browser, go to localhost:3000/
+#Prerequisite
+Clone or Download File
+then
+In Terminal/Cmd, type npm install then node index.js
+
+
+#Running the test:
+In Browser, go to localhost:3000/
+- Register to an account
+then Login to the registered account
+*this is to register user account information in able to login to the account
+- Navigation Bar
+
+
+
 
 
