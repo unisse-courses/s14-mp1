@@ -81,20 +81,21 @@ The web application is anchored towards four key indicators: Security, Simplicit
 - Create Post
   - A user can post a review about a certain professor in the selected college and course chosen.
 
-- Edit Post <sup>[1](#fn1)</sup>
+- Edit Post <sup>[[1]](#fn1)</sup>
   - A user can edit a post he/she posted.
 
-- Delete Post <sup>[1](#fn1)</sup>
+- Delete Post <sup>[[1]](#fn1)</sup>
   - A user can delete posts he/she had already posted.
 
-- Comment <sup>[1](#fn1)</sup>
+- Comment <sup>[[1]](#fn1)</sup>
   - A user can comment on a post posted by other users and/or his/her own post.
 
-- Edit Comment <sup>[1](#fn1)</sup>
+- Edit Comment <sup>[[1]](#fn1)</sup>
   - A user can edit a comment he/she posted.
 
-- Delete Comment <sup>[1](#fn1)</sup>
+- Delete Comment <sup>[[1]](#fn1)</sup>
   - A user can delete his/her own comment.
+
 
 
 <a name="fn1">[1]</a>: Feature will be implemented on MP Phase 3 submission.
