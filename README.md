@@ -17,3 +17,8 @@ This project is still **under development** and will be constantly updated once 
 3. Run `npm install`.
 4. Run `node index.js`.
 5. You're ready to go!
+
+
+# UML
+
+![Revised UML](screens/UML_Revised.png)
