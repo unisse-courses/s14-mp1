@@ -5,3 +5,11 @@
 *Cruz, Jolson Eric
 *Garcia, Ryan Kyle M.
 *Santos Maria Joeme V.
+
+
+#Installing
+*Clone or Download File
+*In Terminal/Cmd, type npm install then node index.js
+*In Browser, go to localhost:3000/
+
+
