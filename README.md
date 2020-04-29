@@ -32,7 +32,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 
 - Mandatory user registration.
 - Community administrators, moderators, and contributors.
-- Anti-discriminatory community guidelines (no cursing, etc). [^1]
+- Anti-discriminatory community guidelines (no cursing, etc). <sup>[1](#fn1)</sup>
 
 ## Security 
 
@@ -41,8 +41,8 @@ The web application is anchored towards four key indicators: Security, Simplicit
 -   Convenient log in - log out navigation.
 -   Convenient changing of password.
 -   Convenient post sectioning (college, course, professor).
--   Convenient post and comment management. [^1]
--   Convenient prof searching and filtering. [^1]
+-   Convenient post and comment management. <sup>[1](#fn1)</sup>
+-   Convenient prof searching and filtering. <sup>[1](#fn1)</sup>
 -   College sorted professors.
 
 ## Reliability
@@ -72,7 +72,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 - See All Professors
   - A user can view all professors with the following information such as name, courses, and college.
 
-- Search Professors/Subjects [^1]
+- Search Professors/Subjects <sup>[1](#fn1)</sup>
   - A user can search for a certain professor by their name and/or subject that will show the matched post subject forum post and/or professor information. 
 
 - See Most Recent Reviews
@@ -81,21 +81,20 @@ The web application is anchored towards four key indicators: Security, Simplicit
 - Create Post
   - A user can post a review about a certain professor in the selected college and course chosen.
 
-- Edit Post [^1]
+- Edit Post <sup>[1](#fn1)</sup>
   - A user can edit a post he/she posted.
 
-- Delete Post [^1]
+- Delete Post <sup>[1](#fn1)</sup>
   - A user can delete posts he/she had already posted.
 
-- Comment [^1]
+- Comment <sup>[1](#fn1)</sup>
   - A user can comment on a post posted by other users and/or his/her own post.
 
-- Edit Comment [^1]
+- Edit Comment <sup>[1](#fn1)</sup>
   - A user can edit a comment he/she posted.
 
-- Delete Comment [^1]
+- Delete Comment <sup>[1](#fn1)</sup>
   - A user can delete his/her own comment.
 
 
-
-[^1]: Feature will be implemented on MP Phase 3 submission.
+<a name="fn1">[1]</a>: Feature will be implemented on MP Phase 3 submission.
