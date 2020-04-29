@@ -17,7 +17,7 @@ In Terminal/Cmd, type npm install then node index.js
 In Browser, go to localhost:3000/
 - Register to an account
 then Login to the registered account
-*this is to register user account information in able to login to the account
+  - this is to register user account information in able to login to the account
 - Navigation Bar
 
 
