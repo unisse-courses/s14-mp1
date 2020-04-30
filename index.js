@@ -60,7 +60,7 @@ app.get('/', function(req, res){
 					reviews.push(document.toObject());
 				});
 
-				res.render('home',{
+				res.render('frontend/home',{
 					colleges: colleges,
 			    	data: qvProfs,
 			    	review: reviews,
@@ -84,7 +84,7 @@ app.get('/colleges', function(req, res){
 			collegeObjects.push(document.toObject());
 		});
 
-	  	res.render('colleges',{
+	  	res.render('frontend/colleges',{
 	  		data: collegeObjects,
 			title: 'Colleges',
 			jumbotronImage: '/assets/headers/college_header.jpg',
@@ -101,13 +101,13 @@ app.get('/colleges/:college', function(req, res){
 
 	collegeModel.findOne({shortName: link}, function(err, college) {
 		if(college === null){
-			res.render('error',{
+			res.render('frontend/error',{
 				title: '404',
   				status: '404'
 			});
 		}
 		else{
-			res.render('colpage',{
+			res.render('frontend/colpage',{
 				college: college.toObject(),
 				jumbotronImage: '/assets/headers/colpage_header.jpg',
 				jumbotronHeader: college.longName,
@@ -131,13 +131,13 @@ app.get('/colleges/:college/professors', function(req, res){
 		});
 
 		if(professorObject.length === 0){
-			res.render('error',{
+			res.render('frontend/error',{
 				title: '404',
   				status: '404'
 			});
 		}
 		else{
-			res.render('professors',{
+			res.render('frontend/professors',{
 				professor: professorObject,
 				title: link + ' Professors',
 		      	jumbotronImage: '/assets/headers/colpage_header.jpg',
@@ -159,13 +159,13 @@ app.get('/professors', function(req, res){
 		});
 
 		if(professorObject.length === 0){
-			res.render('error',{
+			res.render('frontend/error',{
 				title: '404',
   				status: '404'
 			});
 		}
 		else{
-			res.render('professors',{
+			res.render('frontend/professors',{
 				professor: professorObject,
 				title: 'Professors',
 		      	jumbotronImage: '/assets/headers/colpage_header.jpg',
@@ -183,7 +183,7 @@ app.get('/professors/:id', function(req, res){
 
 	professorModel.findOne({profNumber: link}, function(err, professor) {
 		if(professor === null){
-			res.render('error',{
+			res.render('frontend/error',{
 				title: '404',
 	  			status: '404'
 			});
@@ -198,7 +198,7 @@ app.get('/professors/:id', function(req, res){
 				});
 
 				collegeModel.findOne({shortName: profData.college}, function(err,college) {
-					res.render('profpage',{
+					res.render('frontend/profpage',{
 						professor: profData,
 						college: college.toObject(),
 						reviews: reviews,
@@ -215,10 +215,7 @@ app.get('/professors/:id', function(req, res){
 	});
 });
 
-//IN
-
 app.post('/addReview', function(req, res) {
-  //console.log(req.body);
 
   var newReview = new reviewModel({
   	profRef: req.body.profRef,
@@ -250,21 +247,19 @@ app.post('/addReview', function(req, res) {
   });
 });
 
-//OUT
-
 app.get('/reviews/:id', function(req,res){
 	const link = req.params.id;
 
 	reviewModel.findOne({_id: link}).populate('profRef').populate('studentRef').exec(function(err, review){
 		if(review === null){
-			res.render('error',{
+			res.render('frontend/error',{
 				title: '404',
 	  			status: '404'
 			});
 		}
 		else{
 			collegeModel.findOne({shortName: review.profRef.college}, function(err,college) {
-				res.render('revpage', {
+				res.render('frontend/revpage', {
 					college: college.toObject(),
 					review: review.toObject(),
 					title: "Review on " + review.profRef.profName,
@@ -287,7 +282,7 @@ app.get('/profile', function(req, res){
 			reviews.push(document.toObject());
 		});
 
-		res.render('profile',{
+		res.render('frontend/profile',{
 			reviews: reviews,
 			title: 'Profile',
 			jumbotronImage: '/assets/headers/user_header.jpg',
@@ -315,19 +310,91 @@ app.get('/getProfByCourse', function(req, res) {
 	});
 });
 
+app.get('/cf-admin', function(req,res) {
+	collegeModel.countDocuments({}, function(err, collegeCount){
+		reviewModel.countDocuments({}, function(err, reviewCount){
+			professorModel.countDocuments({}, function(err, professorCount){
+				userModel.countDocuments({}, function(err, userCount){
+					res.render('backend/admin',{
+						title: 'Dashboard',
+						layout: 'backend',
+						collegeCount: collegeCount,
+						reviewCount: reviewCount,
+						professorCount: professorCount,
+						userCount: userCount,
+						jumbotronImage: '/assets/headers/admin_header.jpg',
+						jumbotronHeader: 'Welcome, Admin!',
+						jumbotronMessage: 'Thank you for taking part in maintaining peace and order within our online platform. This is the backend of the website which has the ultimate power to moderate the contents and features of our Community Forum.',
+						jumbotronLink: '/',
+						jumbotronBtn: 'View Frontend'
+					});
+				});
+			});
+		});
+	});
+});
+
+app.get('/cf-admin/colleges', function(req,res) {
+	res.render('backend/colleges',{
+		title: 'College Panel',
+		layout: 'backend',
+		jumbotronImage: '/assets/headers/admin_header.jpg',
+		jumbotronHeader: 'College Panel',
+		jumbotronMessage: 'Welcome to the college panel. This page has the ultimate power to add, edit, and delete any college page found inside the Community Forum.',
+		jumbotronLink: '/cf-admin',
+		jumbotronBtn: 'Back to Dashboard'
+	});
+});
+
+app.get('/cf-admin/reviews', function(req,res) {
+	res.render('backend/reviews',{
+		title: 'Review Panel',
+		layout: 'backend',
+		jumbotronImage: '/assets/headers/admin_header.jpg',
+		jumbotronHeader: 'Review Panel',
+		jumbotronMessage: 'Welcome to the Review’s Panel. This page has the capacity to edit any review and also delete certain reviews located in the DLSU Community Forum.',
+		jumbotronLink: '/cf-admin',
+		jumbotronBtn: 'Back to Dashboard'
+	});
+});
+
+app.get('/cf-admin/professors', function(req,res) {
+	res.render('backend/professors',{
+		title: 'Professor Panel',
+		layout: 'backend',
+		jumbotronImage: '/assets/headers/admin_header.jpg',
+		jumbotronHeader: 'Professor Panel',
+		jumbotronMessage: 'Welcome to the Professor Panel. This page is not only for adding and deleting a professor but it also has the capability to edit the professor’s information and the course that they are currently teaching.',
+		jumbotronLink: '/cf-admin',
+		jumbotronBtn: 'Back to Dashboard'
+	});
+});
+
+app.get('/cf-admin/users', function(req,res) {
+	res.render('backend/users',{
+		title: 'User Panel',
+		layout: 'backend',
+		jumbotronImage: '/assets/headers/admin_header.jpg',
+		jumbotronHeader: 'User Panel',
+		jumbotronMessage: 'Welcome to the User Panel. This page has the ability to add, ban and delete a user participating inside the community forum while also having the freedom to update the user information.',
+		jumbotronLink: '/cf-admin',
+		jumbotronBtn: 'Back to Dashboard'
+	});
+});
+
 app.listen(app.get('port'), function(){
 	console.log('Server started on port ' + app.get('port'));
 });
 
 app.use(function (req, res, next) {
-  res.status(404).render('error',{
+  res.status(404).render('frontend/error',{
   	title: '404',
   	status: '404'
   });
 });
 
 app.use(function (req, res, next) {
-  res.status(500).render('error',{
+  res.status(500).render('frontend/error',{
   	title: '500',
   	status: '500'
   });

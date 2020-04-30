@@ -1,0 +1,75 @@
+{{>jumbotron}}
+
+<div class="row mt-sm-4 mt-md-0">
+
+  <div class="col-sm-12 col-md-8">
+    <h3>College Information</h3>
+    <table class="table table-hover table-light mb-5">
+    <thead class="thead-green">
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">College</th>
+        <th scope="col">Full Name</th>
+        <th scope="col">No. of Professors</th>
+        <th scope="col" class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each college}}
+        <tr>
+          <th scope="row"></th>
+          <td>{{this.shortName}}</td>
+          <td>{{this.longName}}</td>
+          <td>X</td>
+          <td class="text-center"><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Review</a></td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  </div>
+
+  <div class="col-sm-12 col-md-4">
+    <h3 class="text-center" id="addCollege">Add College</h3>
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="text-center">
+          <img src="/assets/logo_box_green.jpg" width="100" class="rounded-10 d-inline-block align-top mt-2 mb-3" alt="DLSU Community Forum">
+        </div>
+
+        <form>
+          <div class="form-group row">
+            <label for="addShortName" class="col-sm-5 col-form-label">Short Name</label>
+            <input type="text" name="shortName" class="form-control col-sm-6" placeholder="COL" required></input>
+          </div>
+          <div class="form-group row">
+            <label for="addLongName" class="col-sm-5 col-form-label">Long Name</label>
+            <input type="text" name="longName" class="form-control col-sm-6" placeholder="College of Law" required></input>
+          </div>
+          <div class="form-group row">
+            <label for="addLogo" class="col-sm-5 col-form-label">College Logo</label>
+            <div class="input-group col-sm-6 custom-file">
+              <input type="file" class="custom-file-input" id="collegeLogo" accept=".jpg,.png" required></input>
+              <label class="custom-file-label" for="collegeLogo">Logo</label>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="addTelNum" class="col-sm-5 col-form-label">Tel. Number</label>
+            <input type="text" name="telNum" class="form-control col-sm-6" placeholder="(632) 524-4611" required></input>
+          </div>
+          <div class="form-group row">
+            <label for="addLongName" class="col-sm-5 col-form-label">Fax Number</label>
+            <input type="text" name="faxNum" class="form-control col-sm-6" placeholder="(632) 302-3899" required></input>
+          </div>
+          <div class="form-group row">
+            <label for="addAboutUs" class="col-sm-5 col-form-label">About Us</label>
+            <textarea class="form-control col-sm-6" id="aboutUs" rows="8" required></textarea>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary mt-0 mb-2">Add College</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

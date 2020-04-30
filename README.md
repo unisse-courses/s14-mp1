@@ -16,8 +16,7 @@ This project is still **under development** and will be constantly updated once 
 2. Use GitBash or CMD to open the cloned repository.
 3. Run `npm install`.
 4. Run `node index.js`.
-5. Open your web browser and navigate to `localhost:3000`.
-6. You're ready to go!
+5. You're ready to go!
 
 
 # UML
@@ -33,7 +32,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 
 - Mandatory user registration.
 - Community administrators, moderators, and contributors.
-- Anti-discriminatory community guidelines (no cursing, etc). <sup>[[1]](#fn1)</sup>
+- Anti-discriminatory community guidelines (no cursing, etc). [^1]
 
 ## Security 
 
@@ -42,8 +41,8 @@ The web application is anchored towards four key indicators: Security, Simplicit
 -   Convenient log in - log out navigation.
 -   Convenient changing of password.
 -   Convenient post sectioning (college, course, professor).
--   Convenient post and comment management. <sup>[[1]](#fn1)</sup>
--   Convenient prof searching and filtering. <sup>[[1]](#fn1)</sup>
+-   Convenient post and comment management. [^1]
+-   Convenient prof searching and filtering. [^1]
 -   College sorted professors.
 
 ## Reliability
@@ -73,7 +72,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 - See All Professors
   - A user can view all professors with the following information such as name, courses, and college.
 
-- Search Professors/Subjects <sup>[[1]](#fn1)</sup>
+- Search Professors/Subjects [^1]
   - A user can search for a certain professor by their name and/or subject that will show the matched post subject forum post and/or professor information. 
 
 - See Most Recent Reviews
@@ -82,21 +81,21 @@ The web application is anchored towards four key indicators: Security, Simplicit
 - Create Post
   - A user can post a review about a certain professor in the selected college and course chosen.
 
-- Edit Post <sup>[[1]](#fn1)</sup>
+- Edit Post [^1]
   - A user can edit a post he/she posted.
 
-- Delete Post <sup>[[1]](#fn1)</sup>
+- Delete Post [^1]
   - A user can delete posts he/she had already posted.
 
-- Comment <sup>[[1]](#fn1)</sup>
+- Comment [^1]
   - A user can comment on a post posted by other users and/or his/her own post.
 
-- Edit Comment <sup>[[1]](#fn1)</sup>
+- Edit Comment [^1]
   - A user can edit a comment he/she posted.
 
-- Delete Comment <sup>[[1]](#fn1)</sup>
+- Delete Comment [^1]
   - A user can delete his/her own comment.
 
 
 
-<a name="fn1">[1]</a>: Feature will be implemented on MP Phase 3 submission.
+[^1]: Feature will be implemented on MP Phase 3 submission.
