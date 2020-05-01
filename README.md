@@ -16,7 +16,8 @@ This project is still **under development** and will be constantly updated once 
 2. Use GitBash or CMD to open the cloned repository.
 3. Run `npm install`.
 4. Run `node index.js`.
-5. You're ready to go!
+5. Navigate to `localhost:3000/login` and create your account.
+6. You're ready to go!
 
 
 # UML
