@@ -382,6 +382,13 @@ app.get('/cf-admin/users', function(req,res) {
 	});
 });
 
+app.get('/login', function(req,res) {
+	res.render('login',{
+		title: 'Log In',
+		layout: 'authenticate'
+	});
+});
+
 app.listen(app.get('port'), function(){
 	console.log('Server started on port ' + app.get('port'));
 });
