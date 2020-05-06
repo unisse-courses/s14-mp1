@@ -6,22 +6,20 @@
     <h3>College Information</h3>
     <table class="table table-hover table-light mb-5">
     <thead class="thead-green">
-      <tr>
-        <th scope="col"></th>
+      <tr class="text-center">
         <th scope="col">College</th>
         <th scope="col">Full Name</th>
         <th scope="col">No. of Professors</th>
-        <th scope="col" class="text-center">Action</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
-      {{#each college}}
-        <tr>
-          <th scope="row"></th>
+      {{#each data}}
+        <tr class="text-center">
           <td>{{this.shortName}}</td>
           <td>{{this.longName}}</td>
-          <td>X</td>
-          <td class="text-center"><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Review</a></td>
+          <td>{{this.count}}</td>
+          <td><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Review</a></td>
         </tr>
       {{/each}}
     </tbody>

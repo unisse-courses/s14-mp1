@@ -1,5 +1,12 @@
 {{>jumbotron}}
 
+<script>
+  window.studentRef = "{{studentRef}}";
+  window.studentId = parseInt("{{studentId}}");
+  window.profRef = "{{professor._id}}";
+  window.profNumber = parseInt("{{professor.profNumber}}");
+</script>
+
 <div class="row mt-sm-4 mt-md-0">
 	<div class="col-sm-12 col-md-8">
     	<table class="table table-hover table-light mb-5">
@@ -33,12 +40,6 @@
     		<div class="card-header bg-gradient font-weight-bold">Submit a Quick Review</div>
 	      	<div class="card-body">
 		      	<form>
-		      		<!-- did these lang cause idk how to pull db from script.js-->
-		      		<p id="revProfRef" name="revProfRef" hidden>{{professor._id}}</p> 
-		      		<p id="revStudentId" name="revStudentId" hidden>11712074</p>
-		      		<p id="revStudentRef" name="revStudentRef" hidden>5e934beba7d465709075b099</p>
-		      		<p id="revProfNum" name="revProfNum" hidden>{{professor.profNumber}}</p>
-		      		<!-- end -->
 		        	<div class="form-group row">
 			            <label for="revProfName" class="col-sm-4 col-form-label">Professor</label>
 			            <select class="custom-select col-sm-7" disabled id="revProfName" name="revProfName">

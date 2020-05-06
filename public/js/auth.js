@@ -1,69 +1,110 @@
-const signUpButton = document.getElementById('signUp');
-const signInButton = document.getElementById('signIn');
-const authContainer = document.getElementById('authContainer');
+window.addEventListener('load', () => {
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const authContainer = document.getElementById('authContainer');
 
-signUpButton.addEventListener('click', () => authContainer.classList.add('right-panel-active'));
-signInButton.addEventListener('click', () => authContainer.classList.remove('right-panel-active'));
+    signUpButton.addEventListener('click', () => authContainer.classList.add('right-panel-active'));
+    signInButton.addEventListener('click', () => authContainer.classList.remove('right-panel-active'));
 
-var regValid = false;
-var regName = "";
-var regId = "";
-var regPass1 = "";
-var regPass2 = "";
+    $('#signUpBtn').click(function(){
+        var newUser = {
+          studentName: $('#regName').val(),
+          studentId: $('#regId').val(),
+          password: '',
+          isAdmin: false
+        };
 
-$("#signUpForm").submit(function(refresh){
-    refresh.preventDefault();
-    regName = $("#regName").val();
-    regId = $("#regId").val();
-    regPass1 = $("#regPass1").val();
-    regPass2 = $("#regPass2").val();
+        var regName = $("#regName").val();
+        var regId = $("#regId").val();
+        var regPass1 = $("#regPass1").val();
+        var regPass2 = $("#regPass2").val();
 
-    if(regName === "") $("#regName").css("border", "1px solid red");
-    else $("#regName").css("border", "0px");
+        if(regName === '')$('#regName').addClass('border border-danger');
+        else $('#regName').removeClass('border-danger');
 
-    if(regId === "") $("#regId").css("border", "1px solid red");
-    else $("#regId").css("border", "0px");
-    
-    if(regPass1 === "" && regPass2 === ""){
-        $("#regPass1").css("border", "1px solid red");
-        $("#regPass2").css("border", "1px solid red");
-    }
-    else if(regPass1 === ""){
-        $("#regPass1").css("border", "1px solid red");
-        alert("Provide a password");
-    }
-    else if(regPass2 === ""){
-        $("#regPass2").css("border", "1px solid red");
-        alert("Confirm your password");
-    }
-    
-    else if(regPass1 !== regPass2){
-        $("#regPass1").css("border", "1px solid red");
-        $("#regPass2").css("border", "1px solid red");
-        alert("Password mismatch! Please try again!!");
-    }
-    else{
-        $("#regPass1").css("border", "0px");
-        $("#regPass2").css("border", "0px");
-        alert("Hi " + regName + "! Your account for ID: " + regId + " has been created. Please sign in now.");
-        regValid = true;
-    }
-});
+        if(regId === '') $('#regId').addClass('border border-danger');
+        else $('#regId').removeClass('border-danger');
 
-$("#signInForm").submit(function(refresh){
-    refresh.preventDefault();
-    var siId = $("#siId").val();
-    var siPass = $("#siPass").val();
+        if((regPass1 === regPass2) && (regPass1 != '')){
+            $('#regPass1').removeClass('border-danger');
+            $('#regPass2').removeClass('border-danger');
+            newUser.password = regPass1;
 
-    if((regName === "" || regId === "" || regPass1 === "" || regPass2 === "") && regValid === false){
-        alert("Please register for an account first!");
-    }
-    else if(regId === siId){
-        if(regPass1 === siPass){
-            alert("Hi " + siId + "! Welcome to the DLSU Community Forum!");
-            window.location.replace("/");
+            $.post('/addUser', newUser, function(data, status) {
+                if (data.success) {
+                    $('#msg1').addClass('text-success');
+                    $('#msg1').removeClass('text-danger');
+                    $('#msg1').text(data.message);
+                    $("#regName").val('');
+                    $("#regId").val('');
+                    $("#regPass1").val('');
+                    $("#regPass2").val('');
+                } else {
+                    $('#msg1').addClass('text-danger');
+                    $('#msg1').removeClass('text-success');
+                    $('#msg1').text(data.message);
+                }
+            });
+        } else{
+            $('#regPass1').addClass('border border-danger');
+            $('#regPass2').addClass('border border-danger');
+            $('#msg1').addClass('text-danger');
+            $('#msg1').removeClass('text-success');
+            $('#msg1').text('Please enter necessary information!');
         }
-        else alert("Password is incorrect or might have been changed! Please sign-up again.");
-    }
-    else alert("Account not found. Please register for an account!");
+    });
+
+    $('#signInBtn').click(function(){
+        var user = {
+          studentId: $('#siId').val(),
+          password: $('#siPass').val(),
+        };
+
+        var studentId = $('#siId').val();
+        var password = $('#siPass').val();
+
+        if(studentId === '' || password === ''){
+            if(studentId === ''){
+                $('#siId').addClass('border border-danger');
+            } else{
+                $('#siId').removeClass('border-danger');
+            }
+
+            if(password === ''){
+                $('#siPass').addClass('border border-danger');
+            } else{
+                $('#siPass').removeClass('border-danger');
+            }
+
+            $('#msg2').addClass('text-danger');
+            $('#msg2').removeClass('text-success');
+            $('#msg2').text('Please enter necessary information!');
+        } 
+        else{
+            $.post('/auth', user, function(data, status) {
+                if(data.success) {
+                    $('#msg2').addClass('text-success');
+                    $('#msg2').removeClass('text-danger');
+                    $('#msg2').text(data.message);
+                    $("#siId").val('');
+                    $('#siId').removeClass('border-danger');
+                    $("#siPass").val('');
+                    $('#siPass').removeClass('border-danger');
+                    var delay = 2000; 
+                    setTimeout(function(){ window.location = '/'; }, delay);
+                } else {
+                    if(data.status == 0) {
+                        $('#siPass').addClass('border border-danger');
+                        $('#siId').removeClass('border-danger');
+                    } else {
+                        $('#siId').addClass('border border-danger');
+                        $('#siPass').removeClass('border-danger');
+                    }
+                    $('#msg2').addClass('text-danger');
+                    $('#msg2').removeClass('text-success');
+                    $('#msg2').text(data.message);
+                }
+            });
+        }
+    });
 });

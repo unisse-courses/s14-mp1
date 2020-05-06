@@ -1,5 +1,10 @@
 {{>jumbotron}}
 
+<script>
+  window.studentRef = "{{session.studentRef}}";
+  window.studentId = parseInt("{{session.studentId}}");
+</script>
+
 <div class="row">
   <!-- TODO: Transform repetitve code below into an EACH -->
   <div class="col">
@@ -105,13 +110,13 @@
           </div>
           <div class="form-group row">
             <label for="quickRev" class="col-sm-4 col-form-label">Review</label>
-            <textarea class="form-control col-sm-7" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <textarea class="form-control col-sm-7" id="revContent" name="revContent" rows="3"></textarea>
           </div>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary mt-0 mb-2">Post Review</button>
+            <button type="button" class="btn btn-primary mt-0 mb-2" id="postReview" name="postReview">Post Review</button>
           </div>
         </form>
-
+        <p id="msg" class="text-danger mb-0 mt-2 text-center"></p>
       </div>
     </div>
   </div>
