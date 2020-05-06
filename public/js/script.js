@@ -54,34 +54,44 @@ window.addEventListener('load', () => {
       prof.innerHTML = profItem;
     });
 
-    /*
+    
     $('#postReview').click(function() {
       var newReview = {
-        profRef: window.profRef,
-        profNumber: window.profNumber,
-        profCourse: $('#revProfCourse').find(":selected").text(),
+        profName: $('#quickProf').find(":selected").text(),
+        profCourse: $('#quickCourse').find(":selected").text(),
         studentRef: window.studentRef,
         studentId: window.studentId,
         reviewContent: $("textarea#revContent").val()
       };
 
-      $.post('/addReview', newReview, function(data, status) {
-        console.log(data);
+      $.get('/getProfDetails', newReview, function(data, status) {
+        var profRef = data._id;
+        var profNumber = data.profNumber;
 
-        if (data.success) {
-          $('#msg').addClass('text-success');
-          $('#msg').removeClass('text-danger');
-          $('#msg').text('Successfully added review!');
-          $('textarea#revContent').val('');
-        } else {
-          $('#msg').addClass('text-danger');
-          $('#msg').removeClass('text-success');
-          $('#msg').text('Error in adding review!');
+        var finalReview = {
+          profRef: profRef,
+          profNumber: profNumber,
+          profCourse: newReview.profCourse,
+          studentRef: newReview.studentRef,
+          studentId: newReview.studentId,
+          reviewContent: newReview.reviewContent
         }
 
+        $.post('/addReview', finalReview, function(data, status) {
+        console.log(data);
+          if (data.success) {
+            $('#msg').addClass('text-success');
+            $('#msg').removeClass('text-danger');
+            $('#msg').text(data.message);
+            $('textarea#revContent').val('');
+          } else {
+            $('#msg').addClass('text-danger');
+            $('#msg').removeClass('text-success');
+            $('#msg').text(data.message);
+          }
+        });
       });
     });
-    */
   });
 
   let url = location.href.replace(/\/$/, "");

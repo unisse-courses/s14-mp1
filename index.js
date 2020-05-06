@@ -344,23 +344,6 @@ app.get('/logout', function(req,res) {
 	console.log('You have succesfully logged out.');
 });
 
-//Logical GET Methods
-app.get('/getCourseByCollege', function(req, res) {
-	var selectedCollege = req._parsedUrl.query;
-		
-	professorModel.find({ college: selectedCollege }).distinct('profCourse', function(err, result) {
-		res.send(result);
-	});
-});
-	
-app.get('/getProfByCourse', function(req, res) {
-	var selectedCourse = req._parsedUrl.query;
-	
-	professorModel.find({ profCourse: selectedCourse }).select('profName profNumber _id').exec(function(err, result) {
-		res.send(result);
-	});
-});
-
 //Backend Routes
 app.get('/cf-admin', function(req,res) {
 	if (req.session.loggedin) {
@@ -544,6 +527,31 @@ app.get('/cf-admin/users', async function(req,res) {
 	}
 });
 
+//Logical GET Methods
+app.get('/getCourseByCollege', function(req, res) {
+	var selectedCollege = req._parsedUrl.query;
+		
+	professorModel.find({ college: selectedCollege }).distinct('profCourse', function(err, result) {
+		res.send(result);
+	});
+});
+	
+app.get('/getProfByCourse', function(req, res) {
+	var selectedCourse = req._parsedUrl.query;
+	
+	professorModel.find({ profCourse: selectedCourse }).select('profName profNumber _id').exec(function(err, result) {
+		res.send(result);
+	});
+});
+
+app.get('/getProfDetails', function(req, res) {
+	var data = req.query;
+	
+	professorModel.findOne({ profCourse: data.profCourse, profName: data.profName }).select('_id profNumber').exec(function(err, result) {
+		res.send(result);
+	});
+});
+
 //POST Methods
 app.post('/auth', function(req,res) {
 	var user = {
@@ -565,6 +573,7 @@ app.post('/auth', function(req,res) {
 				req.session.studentRef = userQuery._id;
 				req.session.idNum = userQuery.studentId;
 				req.session.admin = userQuery.isAdmin;
+				req.session.banned = userQuery.isBanned;
 				req.session.loggedin = true;
 				result = { status: 1, success: true, message: "Log In Succesfull! Redirecting you to homepage..." }
 				res.send(result);
@@ -615,28 +624,33 @@ app.post('/addUser', function(req, res) {
 });
 
 app.post('/addReview', function(req, res) {
-	var newReview = new reviewModel({
-	  	profRef: req.body.profRef,
-	    profNumber: req.body.profNumber,
-	    profCourse: req.body.profCourse,
-	    studentRef: req.body.studentRef,
-	    studentId: req.body.studentId,
-	    reviewContent: req.body.reviewContent,
-  	});
-
-  	newReview.save(function(err, review) {
+	if (req.session.banned){
 		var result;
-		if (err) {
-	    	console.log(err.errors);
-	    	result = { success: false, message: "Review was not created!" }
-	    	res.send(result);
-	    } else {
-	    	console.log("Successfully added review!");
-	    	console.log(review);
-	    	result = { success: true, message: "Review created!" }
-	    	res.send(result);
-	    }
-	});
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var newReview = new reviewModel({
+		  	profRef: req.body.profRef,
+		    profNumber: req.body.profNumber,
+		    profCourse: req.body.profCourse,
+		    studentRef: req.body.studentRef,
+		    studentId: req.body.studentId,
+		    reviewContent: req.body.reviewContent,
+	  	});
+
+	  	newReview.save(function(err, review) {
+			var result;
+			if (err) {
+		    	console.log(err.errors);
+		    	result = { success: false, message: "Error in adding review!" }
+		    	res.send(result);
+		    } else {
+		    	console.log(review);
+		    	result = { success: true, message: "Successfully added review!" }
+		    	res.send(result);
+		    }
+		});
+	}
 });
 
 //HTTP Status Routes
