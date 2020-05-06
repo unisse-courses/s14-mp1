@@ -16,7 +16,8 @@ var userSchema = new Schema({
 	studentName: {type: String},
 	studentId: {type: Int32},
 	password: {type: String},
-	isAdmin: {type: Boolean}
+	isAdmin: {type: Boolean},
+	isBanned: {type: Boolean}
 });
 
 module.exports = mongoose.model('user', userSchema, 'user');

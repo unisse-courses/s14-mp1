@@ -11,6 +11,7 @@ var session = require('express-session');
 
 //Import Models
 const collegeModel = require('./models/college');
+const commentModel = require('./models/comment');
 const professorModel = require('./models/professor');
 const userModel = require('./models/user');
 const reviewModel = require('./models/review');
@@ -432,19 +433,37 @@ app.get('/cf-admin/colleges', async function(req,res) {
 	}
 });
 
-app.get('/cf-admin/reviews', function(req,res) {
+app.get('/cf-admin/reviews', async function(req,res) {
 	if (req.session.loggedin) {
 		if (req.session.admin) {
-			res.render('backend/reviews',{
-				session: req.session,
-				title: 'Review Panel',
-				layout: 'backend',
-				jumbotronImage: '/assets/headers/admin_header.jpg',
-				jumbotronHeader: 'Review Panel',
-				jumbotronMessage: 'Welcome to the Review’s Panel. This page has the capacity to edit any review and also delete certain reviews located in the DLSU Community Forum.',
-				jumbotronLink: '/cf-admin',
-				jumbotronBtn: 'Back to Dashboard'
-			});
+			const reviewRes = await reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).lean().exec(); //.exec() returns a Promise, so you can `await` it.
+			const resultPromises = reviewRes.map(async review => { //arrow function is equivalent to function in this context
+		    	const commentCount = await commentModel.countDocuments({ reviewRef: review._id }).populate('reviewRef').populate('studentRef');
+		    	review.count = commentCount;
+		    	return review;
+		  	});
+		  	const reviewObject = await Promise.all(resultPromises);
+
+		  	commentModel.find({}).populate('reviewRef').populate('studentRef').exec(function(err, comments){
+		  		var commentObject = [];
+
+		 		comments.forEach(function(document){
+					commentObject.push(document.toObject());
+				});
+
+		  		res.render('backend/reviews',{
+					session: req.session,
+					review: reviewObject,
+					comment: commentObject,
+					title: 'Review Panel',
+					layout: 'backend',
+					jumbotronImage: '/assets/headers/admin_header.jpg',
+					jumbotronHeader: 'Review Panel',
+					jumbotronMessage: 'Welcome to the Review’s Panel. This page has the capacity to edit any review and also delete certain reviews located in the DLSU Community Forum.',
+					jumbotronLink: '/cf-admin',
+					jumbotronBtn: 'Back to Dashboard'
+				});
+		  	});
 		} else{
 			res.render('frontend/error',{
 				session: req.session,
@@ -457,11 +476,20 @@ app.get('/cf-admin/reviews', function(req,res) {
 	}
 });
 
-app.get('/cf-admin/professors', function(req,res) {
+app.get('/cf-admin/professors', async function(req,res) {
 	if (req.session.loggedin) {
 		if (req.session.admin) {
+			const professorRes = await professorModel.find({}).lean().sort({_id:1}).exec(); //.exec() returns a Promise, so you can `await` it.
+			const resultPromises = professorRes.map(async professor => { //arrow function is equivalent to function in this context
+		    	const reviewCount = await reviewModel.countDocuments({ profRef: professor._id });
+		    	professor.count = reviewCount;
+		    	return professor;
+		  	});
+		  	const professorObject = await Promise.all(resultPromises);
+
 			res.render('backend/professors',{
 				session: req.session,
+				professor: professorObject,
 				title: 'Professor Panel',
 				layout: 'backend',
 				jumbotronImage: '/assets/headers/admin_header.jpg',
@@ -482,11 +510,20 @@ app.get('/cf-admin/professors', function(req,res) {
 	}
 });
 
-app.get('/cf-admin/users', function(req,res) {
+app.get('/cf-admin/users', async function(req,res) {
 	if (req.session.loggedin){
 		if (req.session.admin){
+			const userRes = await userModel.find({}).lean().sort({_id:1}).exec(); //.exec() returns a Promise, so you can `await` it.
+			const resultPromises = userRes.map(async user => { //arrow function is equivalent to function in this context
+		    	const reviewCount = await reviewModel.countDocuments({ studentId: user.studentId });
+		    	user.count = reviewCount;
+		    	return user;
+		  	});
+		  	const userObject = await Promise.all(resultPromises);
+
 			res.render('backend/users',{
 				session: req.session,
+				user: userObject,
 				title: 'User Panel',
 				layout: 'backend',
 				jumbotronImage: '/assets/headers/admin_header.jpg',

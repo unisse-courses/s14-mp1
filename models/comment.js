@@ -14,7 +14,7 @@ const options = {
 mongoose.connect(databaseURL, options);
 
 var commentSchema = new Schema({
-	reviewRef: {type: ObjectId, ref: 'professor', required: true},
+	reviewRef: {type: ObjectId, ref: 'review', required: true},
 	studentRef: {type: ObjectId, ref: 'user', required: true},
 	commentContent: {type: String, required: true},
 });

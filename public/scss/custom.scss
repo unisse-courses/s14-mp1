@@ -48,3 +48,38 @@ $body-bg: #ededed;
   overflow-y: scroll;
 }
 */
+
+.nav-mytabs {
+  margin-top: 2rem;
+}
+ 
+.nav-mytabs li:not(:last-child) {
+  margin-right: 7px;
+}
+ 
+.nav-mytabs a {
+  position: relative;
+  top: 4px;
+  padding: 10px 25px;
+  border-radius: 2px 2px 0 0;
+  background: #00703c;;
+  color: #fff;
+  opacity: 0.9;
+  transition: all 0.1s ease-in-out;
+}
+ 
+.nav-mytabs a.active, 
+.nav-mytabs a:hover {
+  background: #fff;
+  color: #000;
+  opacity: 1;
+  top: 0;
+}
+ 
+.mytab-content {
+  position: relative;
+  z-index: 2;
+  padding: 25px;
+  border-radius: 0 4px 4px 4px;
+  background: #fff;
+}

@@ -6,24 +6,22 @@
     <h3>Professor Information</h3>
     <table class="table table-hover table-light mb-5">
     <thead class="thead-green">
-      <tr>
-        <th scope="col"></th>
+      <tr class="text-center">
         <th scope="col">Name</th>
         <th scope="col">College</th>
         <th scope="col">Course</th>
         <th scope="col">No. of Reviews</th>
-        <th scope="col" class="text-center">Action</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
       {{#each professor}}
-        <tr>
-          <th scope="row"></th>
-          <td>{{this.name}}</td>
+        <tr class="text-center">
+          <td>{{this.profName}}</td>
           <td>{{this.college}}</td>
-          <td>{{this.course}}</td>
-          <td>X</td>
-          <td class="text-center"><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Profile</a></td>
+          <td>{{this.profCourse}}</td>
+          <td>{{this.count}}</td>
+          <td><a class="btn btn-primary btn-sm text-white" href="/professors/{{this.profNumber}}">Go to Profile</a></td>
         </tr>
       {{/each}}
     </tbody>
