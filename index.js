@@ -274,16 +274,23 @@ app.get('/reviews/:id', function(req,res){
 			}
 			else{
 				collegeModel.findOne({shortName: review.profRef.college}, function(err,college) {
-					res.render('frontend/revpage', {
-						session: req.session,
-						college: college.toObject(),
-						review: review.toObject(),
-						title: "Review on " + review.profRef.profName,
-						jumbotronImage: '/assets/headers/profpage_header.jpg',
-						jumbotronHeader: review.profRef.profName,
-						jumbotronMessage: 'An exemplary Lasallian educator who teach minds, touch hearts, and transform lives by diligently teaching ' + review.profRef.profCourse + ' from the ' + college.longName + '.',
-						jumbotronLink: '/',
-						jumbotronBtn: 'Back to Homepage'
+					commentModel.find({reviewRef: review._id}).populate("reviewRef").populate("studentRef").exec(function(err, result){
+						var commentObject = [];
+						result.forEach(function(document){
+							commentObject.push(document.toObject());
+						});
+						res.render('frontend/revpage', {
+							session: req.session,
+							comment: commentObject,
+							college: college.toObject(),
+							review: review.toObject(),
+							title: "Review on " + review.profRef.profName,
+							jumbotronImage: '/assets/headers/profpage_header.jpg',
+							jumbotronHeader: review.profRef.profName,
+							jumbotronMessage: 'An exemplary Lasallian educator who teach minds, touch hearts, and transform lives by diligently teaching ' + review.profRef.profCourse + ' from the ' + college.longName + '.',
+							jumbotronLink: '/',
+							jumbotronBtn: 'Back to Homepage'
+						});
 					});
 				});
 			}
@@ -433,6 +440,8 @@ app.get('/cf-admin/reviews', async function(req,res) {
 		 		comments.forEach(function(document){
 					commentObject.push(document.toObject());
 				});
+
+				console.log(commentObject);
 
 		  		res.render('backend/reviews',{
 					session: req.session,
@@ -649,6 +658,60 @@ app.post('/addReview', function(req, res) {
 		    	result = { success: true, message: "Successfully added review!" }
 		    	res.send(result);
 		    }
+		});
+	}
+});
+
+app.post('/addComment', function(req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var newComment = new commentModel({
+			reviewRef: req.body.reviewRef,
+		 	studentRef: req.body.studentRef,
+		  	commentContent: req.body.commentContent,
+		});
+
+		newComment.save(function(err, comment) {
+			var result;
+			if (err) {
+				console.log(err.errors);
+				result = { success: false, message: "Comment was not posted!" }
+				res.send(result);
+		  	} else {
+				console.log(comment);
+				result = { success: true, message: "Comment posted!" }
+				res.send(result);
+		  	}
+		});
+	}
+});
+
+app.post('/savePost', function(req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var id = req.body.reviewRef;
+		var content = req.body.commentContent;
+
+		reviewModel.findOne({_id: id}, function(err, doc){
+			var result;
+			if(err){
+				console.log(err.errors);
+				result = { success: false, message: "Review was not successfully saved!" }
+				res.send(result);
+			} else{
+				doc.reviewContent = content;
+				doc.save();
+				console.log("Successfully saved review!");
+				console.log(doc);
+				result = { success: true, message: "Review saved!" }
+				res.send(result);
+			}
 		});
 	}
 });

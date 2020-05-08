@@ -1,6 +1,7 @@
 window.addEventListener('load', () => {
   var profRef = '';
   var profNumber = 0;
+  let url = location.href.replace(/\/$/, "");
 
   $('#addReview').click(function() {
     var newReview = {
@@ -24,6 +25,29 @@ window.addEventListener('load', () => {
         $('#msg').addClass('text-danger');
         $('#msg').removeClass('text-success');
         $('#msg').text('Error in adding review!');
+      }
+    });
+  });
+
+  $('#addComment').click(function() {
+    var newComment = {
+      reviewRef: $('#commProf').find(":selected").text(),
+      studentRef: window.studentRef,
+      commentContent: $("textarea#commContent").val()
+    };
+
+    $.post('/addComment', newComment, function(data, status) {
+      console.log(data);
+
+      if (data.success) {
+        $('#msg').addClass('text-success');
+        $('#msg').removeClass('text-danger');
+        $('#msg').text(data.message);
+        $('textarea#commContent').val('');
+      } else {
+        $('#msg').addClass('text-danger');
+        $('#msg').removeClass('text-success');
+        $('#msg').text(data.message);
       }
     });
   });
@@ -53,7 +77,6 @@ window.addEventListener('load', () => {
       });
       prof.innerHTML = profItem;
     });
-
     
     $('#postReview').click(function() {
       var newReview = {
@@ -78,7 +101,7 @@ window.addEventListener('load', () => {
         }
 
         $.post('/addReview', finalReview, function(data, status) {
-        console.log(data);
+          console.log(data);
           if (data.success) {
             $('#msg').addClass('text-success');
             $('#msg').removeClass('text-danger');
@@ -94,8 +117,44 @@ window.addEventListener('load', () => {
     });
   });
 
-  let url = location.href.replace(/\/$/, "");
+  $(document).on('click', 'button[data-id]', function (e) {
+    var id = $(this).data('id');
+    var content = $(this).data('content');
+    var course = $(this).data('course');
+    var profName = $(this).data('profname');
  
+    document.getElementById('modalReviewRef').value = id; 
+    document.getElementById('modalCommentContent').innerHTML = content; 
+    document.getElementById('modalEditPostCourse').value = course;  
+    document.getElementById('modalEditPostProfName').value = profName;       
+  });
+
+  $('#editPostClose').click(function(){
+    document.getElementById('modalCommentContent').innerHTML = ""; 
+    document.getElementById('modalEditPostCourse').value = "";  
+    document.getElementById('modalEditPostProfessor').value = "";    
+  });
+
+  $('#savePost').click(function() {
+    var post = {
+      reviewRef: $('#modalReviewRef').val(),
+      commentContent: $('#modalCommentContent').val()
+    };
+
+    $.post('/savePost', post, function(data, status) {
+      console.log(data);
+      if (data.success) {
+        $('#msgEd').addClass('text-success');
+        $('#msgEd').removeClass('text-danger');
+        $('#msgEd').text(data.message);
+      } else {
+        $('#msgEd').addClass('text-danger');
+        $('#msgEd').removeClass('text-success');
+        $('#msgEd').text(data.message);
+      }
+    });
+  });
+
   if (location.hash) {
     const hash = url.split("#");
     $('#myTab a[href="#'+hash[1]+'"]').tab("show");

@@ -51,7 +51,7 @@
 		          		<td>{{this.studentRef.studentId}}</td>
 		          		<td>{{this.studentRef.studentName}}</td>
 		          		<td><span class="d-inline-block text-truncate" style="max-width: 400px;">{{this.commentContent}}</span></td>
-		          		<td><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this._id}}">Go to Review</a></td>
+		          		<td><a class="btn btn-primary btn-sm text-white" href="/reviews/{{this.reviewRef._id}}#{{this._id}}">Go to Review</a></td>
 		        	</tr>
 		      	{{/each}}
 			</tbody>
