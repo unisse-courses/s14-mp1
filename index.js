@@ -8,6 +8,7 @@ var app = express();
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var bcrypt = require('bcrypt');
 
 //Import Models
 const collegeModel = require('./models/college');
@@ -302,23 +303,35 @@ app.get('/reviews/:id', function(req,res){
 
 app.get('/profile', function(req, res){
 	if (req.session.loggedin){
-		reviewModel.find({studentId: req.session.idNum}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result) {
-		 	var reviews = [];
+		reviewModel.find({studentId: req.session.idNum}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result1) {
+		 	var reviewObject = [];
 
-			result.forEach(function(document){
-				reviews.push(document.toObject());
+			result1.forEach(function(document){
+				reviewObject.push(document.toObject());
 			});
 
-			res.render('frontend/profile',{
-				session: req.session,
-				reviews: reviews,
-				title: 'Profile',
-				session: req.session,
-				jumbotronImage: '/assets/headers/user_header.jpg',
-				jumbotronHeader: 'Hello ' + req.session.nickname + ',',
-				jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
-				jumbotronBtn: 'Back to Homepage',
-				jumbotronLink: '/'
+			commentModel.find({studentRef: req.session.studentRef}).populate({path: 'reviewRef', model: 'review', populate: { path: 'profRef', model: 'professor'}}).populate('studentRef').sort({_id:-1}).exec(function(err, result2){
+				var commentObject = [];
+				var comment;
+
+				result2.forEach(function(document){
+					comment = document.toObject();
+					comment['profDetails'] = document.reviewRef.profRef.toObject();
+					commentObject.push(comment);
+				});
+
+				res.render('frontend/profile',{
+					session: req.session,
+					reviews: reviewObject,
+					comments: commentObject,
+					title: 'Profile',
+					session: req.session,
+					jumbotronImage: '/assets/headers/user_header.jpg',
+					jumbotronHeader: 'Hello ' + req.session.nickname + ',',
+					jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
+					jumbotronBtn: 'Back to Homepage',
+					jumbotronLink: '/'
+				});
 			});
 		});
 	} else{
@@ -576,7 +589,7 @@ app.post('/auth', function(req,res) {
 		}
 		if (userQuery){
 			console.log('User found!');
-			if (userQuery.password === user.password) {
+			if (bcrypt.compareSync(user.password, userQuery.password)) {
 				req.session.nickname = userQuery.studentName.substr(0, userQuery.studentName.indexOf(' '));
 				req.session.fullname = userQuery.studentName;
 				req.session.studentRef = userQuery._id;
@@ -715,6 +728,89 @@ app.post('/savePost', function(req, res) {
 		});
 	}
 });
+
+app.post('/saveComment', function(req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var id = req.body.id;
+		var content = req.body.content;
+
+		commentModel.findOne({_id: id}, function(err, doc){
+			var result;
+			if(err){
+				console.log(err.errors)
+				result = { success: false, message: "Comment was not successfully saved!" }
+				res.send(result);
+			}
+			else{
+				doc.commentContent = content;
+				doc.save();
+				console.log("Successfully saved comment!");
+				console.log(doc);
+				result = { success: true, message: "Comment saved!" }
+				res.send(result);
+			}
+		});
+	}
+});
+
+app.post('/deletePost', function(req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var id = req.body.id;
+		commentModel.deleteMany({ reviewRef: id}, function (err) {
+	  		if(err){
+	  			console.log(err);
+	  		} else{
+	  			reviewModel.deleteOne({ _id: id }, function (err) {	 
+					if(err){
+						console.log(err.errors);
+						result = { success: false, message: "Review was not successfully deleted!" }
+						res.send(result);
+					} else {
+						console.log("Successfully deleted review!");
+						result = { success: true, message: "Review deleted!" }
+						res.send(result);
+					}
+				});
+	  		}
+		});
+	}
+ });
+
+app.post('/deleteComment', function (req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var id = req.body.id;
+		commentModel.deleteOne({ _id: id }, function (err) {
+			if (err) {
+				console.log(err.errors);
+				result = {
+					success: false,
+					message: "Comment was not successfully deleted!"
+				}
+				res.send(result);
+			} else {
+				console.log("Successfully deleted comment!");
+				result = {
+					success: true,
+					message: "Comment deleted!"
+				}
+				res.send(result);
+			}
+		});
+	}
+});
+
 
 //HTTP Status Routes
 app.use(function (req, res, next) {

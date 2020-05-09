@@ -29,9 +29,9 @@ window.addEventListener('load', () => {
     });
   });
 
-  $('#addComment').click(function() {
+  $('#commentBtn').click(function() {
     var newComment = {
-      reviewRef: $('#commProf').find(":selected").text(),
+      reviewRef: $('#commRN').find(":selected").text(),
       studentRef: window.studentRef,
       commentContent: $("textarea#commContent").val()
     };
@@ -118,15 +118,34 @@ window.addEventListener('load', () => {
   });
 
   $(document).on('click', 'button[data-id]', function (e) {
+    var funct = $(this).data('funct');
     var id = $(this).data('id');
-    var content = $(this).data('content');
-    var course = $(this).data('course');
-    var profName = $(this).data('profname');
- 
-    document.getElementById('modalReviewRef').value = id; 
-    document.getElementById('modalCommentContent').innerHTML = content; 
-    document.getElementById('modalEditPostCourse').value = course;  
-    document.getElementById('modalEditPostProfName').value = profName;       
+
+    if (funct == 'editPost' || funct == 'editComment') {
+      var content = $(this).data('content');
+      var course = $(this).data('course');
+      var profName = $(this).data('profname');
+   
+      if (funct == 'editPost') { 
+        document.getElementById('modalReviewRef').value = id;
+        document.getElementById('modalReviewContent').innerHTML = content;
+        document.getElementById('modalEditPostCourse').value = course;
+        document.getElementById('modalEditPostProfessor').value = profName;
+      } else{
+        document.getElementById('modalCommentRef').value = id;
+        document.getElementById('modalCommentContent').innerHTML = content;
+        document.getElementById('modalEditCommentCourse').value = course;
+        document.getElementById('modalEditCommentProfessor').value = profName;
+      }
+    }
+
+    if(funct == 'deletePost'){
+        document.getElementById('modalDeleteReviewRef').value = id;
+    }
+
+    if(funct == 'deleteComment'){
+        document.getElementById('modalDeleteCommentRef').value = id;
+    }
   });
 
   $('#editPostClose').click(function(){
@@ -135,26 +154,95 @@ window.addEventListener('load', () => {
     document.getElementById('modalEditPostProfessor').value = "";    
   });
 
+   $('#editCommentClose').click(function () {
+    document.getElementById('modalCommentContent').innerHTML = "";
+    document.getElementById('modalEditCommentCourse').value = "";
+    document.getElementById('modalEditCommentProfessor').value = "";
+  });
+
+  // EDIT POST SAVE
   $('#savePost').click(function() {
     var post = {
       reviewRef: $('#modalReviewRef').val(),
-      commentContent: $('#modalCommentContent').val()
+      commentContent: $('#modalReviewContent').val()
     };
-
     $.post('/savePost', post, function(data, status) {
       console.log(data);
       if (data.success) {
-        $('#msgEd').addClass('text-success');
-        $('#msgEd').removeClass('text-danger');
-        $('#msgEd').text(data.message);
+        $('#msgEd1').addClass('text-success');
+        $('#msgEd1').removeClass('text-danger');
+        $('#msgEd1').text(data.message);
       } else {
-        $('#msgEd').addClass('text-danger');
-        $('#msgEd').removeClass('text-success');
-        $('#msgEd').text(data.message);
+        $('#msgEd1').addClass('text-danger');
+        $('#msgEd1').removeClass('text-success');
+        $('#msgEd1').text(data.message);
+      }
+    });
+    var delay = 500; 
+    setTimeout(function(){location.reload(true)}, delay);
+  });
+
+  //EDIT COMMENT SAVE
+  $('#saveComment').click(function () {
+    var comment = {
+      id: $('#modalCommentRef').val(),
+      content: $('#modalCommentContent').val()
+    };
+    $.post('/saveComment', comment, function (data, status) {
+      console.log(data);
+      if (data.success) {
+        $('#msgEd2').addClass('text-success');
+        $('#msgEd2').removeClass('text-danger');
+        $('#msgEd2').text(data.message);
+      } else {
+        $('#msgEd2').addClass('text-danger');
+        $('#msgEd2').removeClass('text-success');
+        $('#msgEd2').text(data.message);
+      }
+    });
+    var delay = 500; 
+    setTimeout(function(){location.reload(true)}, delay);
+  });
+
+  //DELETE POST
+  $('#deletePost').click(function () {
+    var post = {
+      id: $('#modalDeleteReviewRef').val()
+    };
+    $.post('/deletePost', post, function (data, status) {
+      if (data.success) {
+        $('#msgDel1').addClass('text-success');
+        $('#msgDel1').removeClass('text-danger');
+        $('#msgDel1').text('Successfully deleted post!');
+        location.reload();
+      } else {
+        $('#msgDel1').addClass('text-danger');
+        $('#msgDel1').removeClass('text-success');
+        $('#msgDel1').text('Error in deleting post!');
       }
     });
   });
 
+  //DELETE COMMENT
+  $('#deleteComment').click(function () {
+    var comment = {
+      id: $('#modalDeleteCommentRef').val()
+    };
+    $.post('/deleteComment', comment, function (data, status) {
+      if (data.success) {
+        $('#msgDel2').addClass('text-success');
+        $('#msgDel2').removeClass('text-danger');
+        $('#msgDel2').text('Successfully deleted comment!');
+        location.reload();
+      } else {
+        $('#msgDel2').addClass('text-danger');
+        $('#msgDel2').removeClass('text-success');
+        $('#msgDel2').text('Error in delete comment!');
+      }
+    });
+  });
+
+  //PANE LINK TRUNCATOR
   if (location.hash) {
     const hash = url.split("#");
     $('#myTab a[href="#'+hash[1]+'"]').tab("show");
@@ -164,7 +252,8 @@ window.addEventListener('load', () => {
       $(window).scrollTop(0);
     }, 400);
   } 
-   
+  
+  //PANE LINK SETTER
   $('a[data-toggle="tab"]').on("click", function() {
     let newUrl;
     const hash = $(this).attr("href");

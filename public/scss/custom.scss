@@ -96,11 +96,11 @@ $body-bg: #ededed;
 }
 
 @-webkit-keyframes target-fade {
-    0% { background-color: rgba(0,0,0,.1); }
+    0% { background-color: rgba(0, 112, 60, 0.40) }
     100% { background-color: rgba(0,0,0,0); }
 }
 
 @-moz-keyframes target-fade {
-    0% { background-color: rgba(0,0,0,.1); }
+    0% { background-color: rgba(0, 112, 60, 0.40) }
     100% { background-color: rgba(0,0,0,0); }
 }
