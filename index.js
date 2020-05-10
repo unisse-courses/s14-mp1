@@ -261,6 +261,39 @@ app.get('/professors/:id', function(req, res){
 	}
 });
 
+app.get('/reviews', async function(req,res){
+	if (req.session.loggedin){
+		const reviewRes = await reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).lean().exec();
+		const resultPromises = reviewRes.map(async review => {
+    		const commentCount = await commentModel.countDocuments({ reviewRef: review._id }).populate('reviewRef').populate('studentRef');
+			review.count = commentCount;
+			return review;
+  		});
+		const reviewObject = await Promise.all(resultPromises);
+
+		collegeModel.find({}).exec(function(err, col){
+			var colleges = [];
+			col.forEach(function(document){
+				colleges.push(document.toObject());
+			});
+		
+			res.render('frontend/reviews', {
+				session: req.session,
+				review: reviewObject,
+				colleges: colleges,
+				title: 'Reviews',
+				jumbotronImage: '/assets/headers/profpage_header.jpg',
+				jumbotronHeader: 'Reviews',
+				jumbotronMessage: 'The review page displays all the reviews made by the students and alumni regarding relevant experiences and interactions with the university professors.',
+				jumbotronLink: '/',
+				jumbotronBtn: 'Back to Homepage'
+			});
+		});
+	} else{
+		res.redirect('/login');
+	}
+});
+
 app.get('/reviews/:id', function(req,res){
 	if (req.session.loggedin){
 		const link = req.params.id;
@@ -758,59 +791,85 @@ app.post('/saveComment', function(req, res) {
 });
 
 app.post('/deletePost', function(req, res) {
-	if (req.session.banned){
-		var result;
-		result = { success: false, message: "Your account is BANNED!" }
-		res.send(result);
-	} else{
-		var id = req.body.id;
-		commentModel.deleteMany({ reviewRef: id}, function (err) {
-	  		if(err){
-	  			console.log(err);
-	  		} else{
-	  			reviewModel.deleteOne({ _id: id }, function (err) {	 
-					if(err){
-						console.log(err.errors);
-						result = { success: false, message: "Review was not successfully deleted!" }
-						res.send(result);
-					} else {
-						console.log("Successfully deleted review!");
-						result = { success: true, message: "Review deleted!" }
-						res.send(result);
-					}
-				});
-	  		}
-		});
-	}
+	var id = req.body.id;
+	commentModel.deleteMany({ reviewRef: id}, function (err) {
+		if(err){
+			console.log(err.errors);
+			result = {
+				success: false,
+				message: "Review and leading comments were not successfully deleted!"
+			}
+			res.send(result);
+		} else{
+			reviewModel.deleteOne({ _id: id }, function (err) {	 
+				if(err){
+					console.log(err.errors);
+					result = { success: false, message: "Review was not successfully deleted!" }
+					res.send(result);
+				} else {
+					console.log("Successfully deleted review!");
+					result = { success: true, message: "Review deleted!" }
+					res.send(result);
+				}
+			});
+	  	}
+	});
  });
 
 app.post('/deleteComment', function (req, res) {
-	if (req.session.banned){
-		var result;
-		result = { success: false, message: "Your account is BANNED!" }
-		res.send(result);
-	} else{
-		var id = req.body.id;
-		commentModel.deleteOne({ _id: id }, function (err) {
-			if (err) {
-				console.log(err.errors);
-				result = {
-					success: false,
-					message: "Comment was not successfully deleted!"
-				}
-				res.send(result);
-			} else {
-				console.log("Successfully deleted comment!");
-				result = {
-					success: true,
-					message: "Comment deleted!"
-				}
-				res.send(result);
+	var id = req.body.id;
+	commentModel.deleteOne({ _id: id }, function (err) {
+		if (err) {
+			console.log(err.errors);
+			result = {
+				success: false,
+				message: "Comment was not successfully deleted!"
 			}
-		});
-	}
+			res.send(result);
+		} else {
+			console.log("Successfully deleted comment!");
+			result = {
+				success: true,
+				message: "Comment deleted!"
+			}
+			res.send(result);
+		}
+	});
 });
 
+
+app.post('/changePassword', function (req, res) {
+	var studentRef = req.session.studentRef;
+	var credentials = {
+    	currentPassword: req.body.oldPassword,
+    	newPassword: req.body.newPassword,
+	};
+
+	userModel.findOne({_id: studentRef}, function(err, userQuery){
+		console.log(userQuery);
+		var result;
+		if(err){
+			console.log(err.errors)
+			result = { success: false, message: "Password was not successfully changed!" }
+			res.send(result);
+		}
+		else{
+			if(bcrypt.compareSync(credentials.currentPassword, userQuery.password)){
+				let hash = bcrypt.hashSync(credentials.newPassword,10);
+  				credentials.newPassword = hash;
+				userQuery.password = credentials.newPassword;
+				userQuery.save();
+				console.log("Successfully changed password!");
+				console.log(userQuery);
+				result = { success: true, message: "Password changed!" }
+				res.send(result);
+			} else{
+				result = { success: false, message: "Current password incorrect! Please try again." }
+				res.send(result);
+			}
+		}
+	})
+});
 
 //HTTP Status Routes
 app.use(function (req, res, next) {

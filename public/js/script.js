@@ -107,6 +107,8 @@ window.addEventListener('load', () => {
             $('#msg').removeClass('text-danger');
             $('#msg').text(data.message);
             $('textarea#revContent').val('');
+            var delay = 500; 
+            setTimeout(function(){location.reload(true)}, delay);
           } else {
             $('#msg').addClass('text-danger');
             $('#msg').removeClass('text-success');
@@ -240,6 +242,56 @@ window.addEventListener('load', () => {
         $('#msgDel2').text('Error in delete comment!');
       }
     });
+  });
+
+  //CHANGE PASSWORD
+  $('#changePassword').click(function () {
+    var credentials = {
+      oldPassword: '',
+      newPassword: ''
+    };
+
+    var currentPassword = $("#currentPassword").val();
+    var newPassword = $("#newPassword").val();
+    var confirmPassword = $("#confirmPassword").val();
+
+    if(currentPassword != ''){
+      if((newPassword === confirmPassword) && (newPassword != '')){
+        $('#currentPassword').removeClass('border-danger');
+        $('#newPassword').removeClass('border-danger');
+        $('#confirmPassword').removeClass('border-danger');
+        credentials.oldPassword = currentPassword;
+        credentials.newPassword = newPassword;
+
+        $.post('/changePassword', credentials, function(data, status) {
+          if (data.success) {
+            $('#msg').addClass('text-success');
+            $('#msg').removeClass('text-danger');
+            $('#msg').text(data.message);
+            $("#currentPassword").val('');
+            $("#newPassword").val('');
+            $("#confirmPassword").val('');
+            var delay = 500; 
+            setTimeout(function(){location.reload(true)}, delay);
+          } else {
+            $('#msg').addClass('text-danger');
+            $('#msg').removeClass('text-success');
+            $('#msg').text(data.message);
+          }
+        });
+      } else{
+        $('#newPassword').addClass('border border-danger');
+        $('#confirmPassword').addClass('border border-danger');
+        $('#msg').addClass('text-danger');
+        $('#msg').removeClass('text-success');
+        $('#msg').text('Please enter a valid new password!');
+      }
+    } else{
+      $('#currentPassword').addClass('border border-danger');
+      $('#msg').addClass('text-danger');
+      $('#msg').removeClass('text-success');
+      $('#msg').text('Please enter your current password!');
+    }
   });
 
   //PANE LINK TRUNCATOR
