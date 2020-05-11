@@ -3,6 +3,7 @@ window.addEventListener('load', () => {
   var profNumber = 0;
   let url = location.href.replace(/\/$/, "");
 
+  //FRONTEND - ADD REVIEW
   $('#addReview').click(function() {
     var newReview = {
       profRef: window.profRef,
@@ -29,6 +30,95 @@ window.addEventListener('load', () => {
     });
   });
 
+  //BACKEND - ADD USER
+  $('#addUser').click(function() {
+    var newUser = {
+        studentName: $('#studentName').val(),
+        studentId: $('#studentId').val(),
+        password: '',
+        isAdmin: $("input[name='studentAdmin']:checked").val(),
+      };
+
+    var studentName = $("#studentName").val();
+    var studentId = $("#studentId").val();
+    var studentPass1 = $("#studentPass1").val();
+    var studentPass2 = $("#studentPass2").val();
+
+    if(studentName === '')$('#studentName').addClass('border border-danger');
+    else $('#studentName').removeClass('border-danger');
+
+    if(studentId === '') $('#studentId').addClass('border border-danger');
+    else $('#studentId').removeClass('border-danger');
+
+    if((studentPass1 === studentPass2) && (studentPass1 != '')) {
+      newUser.password = studentPass1;
+      $('#studentPass1').removeClass('border-danger');
+      $('#studentPass2').removeClass('border-danger');
+      $.post('/addUser', newUser, function(data, status) {
+        if (data.success) {
+          $('#msg').addClass('text-success');
+          $('#msg').removeClass('text-danger');
+          $('#msg').text(data.message);
+          $("#studentName").val('');
+          $("#studentId").val('');
+          $("#studentPass1").val('');
+          $("#studentPass2").val('');
+          $('input[name="studentAdmin"]:checked').prop('checked', false);
+          var delay = 500; 
+          setTimeout(function(){location.reload(true)}, delay);
+        } else {
+          $('#msg').addClass('text-danger');
+          $('#msg').removeClass('text-success');
+          $('#msg').text(data.message);
+        }
+      });        
+    } else{
+      $('#studentPass1').addClass('border border-danger');
+      $('#studentPass2').addClass('border border-danger');
+      $('#msg').addClass('text-danger');
+      $('#msg').removeClass('text-success');
+      $('#msg').text('Please enter necessary information!');
+    }
+  });
+
+  //BACKEND - ADD PROFESSOR
+  $('#addProfessor').click(function() {
+    var newProfessor = {
+      profName: $("#profName").val(),
+      gender: $("input[name='profGender']:checked").val(),
+      college: $('#profCollege').find(":selected").text(),
+      profCourse: $("#profCourse").val()
+    };
+
+    if(newProfessor.profName === '')$('#profName').addClass('border border-danger');
+    else $('#profName').removeClass('border-danger');
+
+    if(newProfessor.college === 'Choose...')$('#profCollege').addClass('border border-danger');
+    else $('#profCollege').removeClass('border-danger');
+
+    if(newProfessor.profCourse === '')$('#profCourse').addClass('border border-danger');
+    else $('#profCourse').removeClass('border-danger');
+
+    $.post('/addProfessor', newProfessor, function(data, status) {
+      console.log(data);
+
+      if (data.success) {
+        $('#msg').addClass('text-success');
+        $('#msg').removeClass('text-danger');
+        $('#msg').text(data.message);
+        $('input[name="gender"]:checked').prop('checked', false);
+        $('#profName').val('');
+        var delay = 500; 
+        setTimeout(function(){location.reload(true)}, delay);
+      } else {
+        $('#msg').addClass('text-danger');
+        $('#msg').removeClass('text-success');
+        $('#msg').text(data.message);
+      }
+    });
+  });
+
+  //FRONTEND - ADD COMMENT
   $('#commentBtn').click(function() {
     var newComment = {
       reviewRef: $('#commRN').find(":selected").text(),
@@ -52,6 +142,7 @@ window.addEventListener('load', () => {
     });
   });
 
+  //FRONTEND - QUICK REVIEW - DYNAMIC COLLEGE
   $('#quickCollege').change(function() {
     var selectedCollege = $(this).children("option").filter(":selected").val();
     var course = document.getElementById('quickCourse');
@@ -66,6 +157,7 @@ window.addEventListener('load', () => {
     });
   });
 
+  //FRONTEND - QUICK REVIEW - DYNAMIC COURSE
   $("#quickCourse").change(function() {
     var selectedCourse = $(this).children("option").filter(":selected").val();
     var prof = document.getElementById('quickProf');
@@ -119,6 +211,7 @@ window.addEventListener('load', () => {
     });
   });
 
+  //FRONTEND - EDIT POST / COMMENT
   $(document).on('click', 'button[data-id]', function (e) {
     var funct = $(this).data('funct');
     var id = $(this).data('id');
@@ -150,19 +243,21 @@ window.addEventListener('load', () => {
     }
   });
 
+  //FRONTEND - EDIT POST (CLOSE)
   $('#editPostClose').click(function(){
     document.getElementById('modalCommentContent').innerHTML = ""; 
     document.getElementById('modalEditPostCourse').value = "";  
     document.getElementById('modalEditPostProfessor').value = "";    
   });
 
-   $('#editCommentClose').click(function () {
+  //FRONTEND - EDIT COMMENT (CLOSE)
+  $('#editCommentClose').click(function () {
     document.getElementById('modalCommentContent').innerHTML = "";
     document.getElementById('modalEditCommentCourse').value = "";
     document.getElementById('modalEditCommentProfessor').value = "";
   });
 
-  // EDIT POST SAVE
+  // FRONT END - EDIT POST (SAVE)
   $('#savePost').click(function() {
     var post = {
       reviewRef: $('#modalReviewRef').val(),
@@ -184,7 +279,7 @@ window.addEventListener('load', () => {
     setTimeout(function(){location.reload(true)}, delay);
   });
 
-  //EDIT COMMENT SAVE
+  // FRONT END - EDIT COMMENT (SAVE)
   $('#saveComment').click(function () {
     var comment = {
       id: $('#modalCommentRef').val(),
@@ -206,7 +301,7 @@ window.addEventListener('load', () => {
     setTimeout(function(){location.reload(true)}, delay);
   });
 
-  //DELETE POST
+  //FRONT END - DELETE POST
   $('#deletePost').click(function () {
     var post = {
       id: $('#modalDeleteReviewRef').val()
@@ -225,7 +320,7 @@ window.addEventListener('load', () => {
     });
   });
 
-  //DELETE COMMENT
+  //FRONT END - DELETE COMMENT
   $('#deleteComment').click(function () {
     var comment = {
       id: $('#modalDeleteCommentRef').val()
@@ -244,7 +339,7 @@ window.addEventListener('load', () => {
     });
   });
 
-  //CHANGE PASSWORD
+  //FRONT END - CHANGE PASSWORD
   $('#changePassword').click(function () {
     var credentials = {
       oldPassword: '',
@@ -294,7 +389,7 @@ window.addEventListener('load', () => {
     }
   });
 
-  //PANE LINK TRUNCATOR
+  //SITEWIDE - PANE LINK TRUNCATOR
   if (location.hash) {
     const hash = url.split("#");
     $('#myTab a[href="#'+hash[1]+'"]').tab("show");
@@ -305,7 +400,7 @@ window.addEventListener('load', () => {
     }, 400);
   } 
   
-  //PANE LINK SETTER
+  //SITEWIDE - PANE LINK SETTER
   $('a[data-toggle="tab"]').on("click", function() {
     let newUrl;
     const hash = $(this).attr("href");

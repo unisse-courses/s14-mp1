@@ -36,37 +36,37 @@
 
         <form>
           <div class="form-group row">
-            <label for="addFullName" class="col-sm-5 col-form-label">Full Name</label>
-            <input type="text" name="fullName" class="form-control col-sm-6" placeholder="Juan Dela Cruz" required></input>
+            <label for="studentName" class="col-sm-5 col-form-label">Full Name</label>
+            <input type="text" id="studentName" name="studentName" class="form-control col-sm-6" placeholder="Juan Dela Cruz" required></input>
           </div>
           <div class="form-group row">
-            <label for="addIdNum" class="col-sm-5 col-form-label">ID Number</label>
-            <input type="number" name="idNum" class="form-control col-sm-6" placeholder="11712345" required></input>
+            <label for="studentId" class="col-sm-5 col-form-label">ID Number</label>
+            <input type="number" id="studentId" name="studentId" pattern="[0-9]{8}" title="Eight digit student ID" class="form-control col-sm-6" placeholder="11712345" required></input>
           </div>
           <div class="form-group row">
-            <label for="addPassword1" class="col-sm-5 col-form-label">Password</label>
-            <input type="password" name="password1" class="form-control col-sm-6" placeholder="p@ssw0rd!" required></input>
+            <label for="studentPass1" class="col-sm-5 col-form-label">Password</label>
+            <input type="password" id="studentPass1" name="studentPass1" class="form-control col-sm-6" placeholder="p@ssw0rd!" required></input>
           </div>
           <div class="form-group row">
-            <label for="addPassword2" class="col-sm-5 col-form-label">Confirm Password</label>
-            <input type="password" name="password2" class="form-control col-sm-6 mt-2" placeholder="p@ssw0rd!" required></input>
+            <label for="studentPass2" class="col-sm-5 col-form-label">Confirm Password</label>
+            <input type="password" id="studentPass2" name="password2" class="form-control col-sm-6 mt-2" placeholder="p@ssw0rd!" required></input>
           </div>
           <div class="form-group row">
-            <label for="addAdmin" class="col-sm-5 col-form-label">Admin?</label>
+            <label for="studentAdmin" class="col-sm-5 col-form-label">Admin?</label>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="isAdmin" id="adminYes" value="option1">
+              <input class="form-check-input" type="radio" name="studentAdmin" id="adminYes" value="true">
               <label class="form-check-label" for="adminYes">Yes</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="isAdmin" id="adminNo" value="option2">
+              <input class="form-check-input" type="radio" name="studentAdmin" id="adminNo" value="false">
               <label class="form-check-label" for="adminNo">No</label>
             </div>
           </div>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary mt-0 mb-2">Add User</button>
+            <button type="button" id="addUser" name="addUser" class="btn btn-primary mt-0 mb-2">Add User</button>
           </div>
         </form>
-
+        <p id="msg" class="text-danger mb-0 mt-2 text-center"></p>
       </div>
     </div>
   </div>

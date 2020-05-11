@@ -525,16 +525,25 @@ app.get('/cf-admin/professors', async function(req,res) {
 		  	});
 		  	const professorObject = await Promise.all(resultPromises);
 
-			res.render('backend/professors',{
-				session: req.session,
-				professor: professorObject,
-				title: 'Professor Panel',
-				layout: 'backend',
-				jumbotronImage: '/assets/headers/admin_header.jpg',
-				jumbotronHeader: 'Professor Panel',
-				jumbotronMessage: 'Welcome to the Professor Panel. This page is not only for adding and deleting a professor but it also has the capability to edit the professor’s information and the course that they are currently teaching.',
-				jumbotronLink: '/cf-admin',
-				jumbotronBtn: 'Back to Dashboard'
+		  	collegeModel.find({}).exec(function(err, col){
+				var colleges = [];
+				
+				col.forEach(function(document){
+					colleges.push(document.toObject());
+				});
+				
+				res.render('backend/professors',{
+					colleges: colleges,
+					session: req.session,
+					professor: professorObject,
+					title: 'Professor Panel',
+					layout: 'backend',
+					jumbotronImage: '/assets/headers/admin_header.jpg',
+					jumbotronHeader: 'Professor Panel',
+					jumbotronMessage: 'Welcome to the Professor Panel. This page is not only for adding and deleting a professor but it also has the capability to edit the professor’s information and the course that they are currently teaching.',
+					jumbotronLink: '/cf-admin',
+					jumbotronBtn: 'Back to Dashboard'
+				});
 			});
 		} else{
 			res.render('frontend/error',{
@@ -581,6 +590,54 @@ app.get('/cf-admin/users', async function(req,res) {
 		res.redirect('/login');
 	}
 });
+
+app.get('/cf-profile', function(req, res){
+	if (req.session.loggedin){
+		if (req.session.admin){
+			reviewModel.find({studentId: req.session.idNum}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result1) {
+			 	var reviewObject = [];
+
+				result1.forEach(function(document){
+					reviewObject.push(document.toObject());
+				});
+
+				commentModel.find({studentRef: req.session.studentRef}).populate({path: 'reviewRef', model: 'review', populate: { path: 'profRef', model: 'professor'}}).populate('studentRef').sort({_id:-1}).exec(function(err, result2){
+					var commentObject = [];
+					var comment;
+
+					result2.forEach(function(document){
+						comment = document.toObject();
+						comment['profDetails'] = document.reviewRef.profRef.toObject();
+						commentObject.push(comment);
+					});
+
+					res.render('frontend/profile',{
+						layout: 'backend',
+						session: req.session,
+						reviews: reviewObject,
+						comments: commentObject,
+						title: 'Profile',
+						session: req.session,
+						jumbotronImage: '/assets/headers/user_header.jpg',
+						jumbotronHeader: 'Hello ' + req.session.nickname + ',',
+						jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
+						jumbotronBtn: 'Back to Homepage',
+						jumbotronLink: '/'
+					});
+				});
+			});
+		} else{
+			res.render('frontend/error',{
+				session: req.session,
+				error: '403',
+	  			message: "Forbidden Access"
+			});
+		}
+	} else{
+		res.redirect('/login');
+	}
+});
+
 
 //Logical GET Methods
 app.get('/getCourseByCollege', function(req, res) {
@@ -648,7 +705,8 @@ app.post('/addUser', function(req, res) {
   		studentName: req.body.studentName,
     	studentId: req.body.studentId,
     	password: req.body.password,
-    	isAdmin: req.body.isAdmin
+    	isAdmin: req.body.isAdmin,
+    	isBanned: false
 	});
 
 	userModel.findOne({studentId: newUser.studentId}, function(err1, userQuery){
@@ -662,6 +720,7 @@ app.post('/addUser', function(req, res) {
 			result = { success: false, message: "User already exists! Please sign in!" }
 	    	res.send(result);
 		} else{
+			newUser.password = bcrypt.hashSync(newUser.password, 10);
 			newUser.save(function(err2, user) {
 				if (err2) {
 					console.log(err2.errors);
@@ -674,6 +733,28 @@ app.post('/addUser', function(req, res) {
 	    			res.send(result);
 				}
 			});
+		}
+	});
+});
+
+app.post('/addProfessor', function(req, res) {
+	var newProfessor = new professorModel({
+    	profName: req.body.profName,
+    	gender: req.body.gender,
+    	college: req.body.college,
+    	profCourse: req.body.profCourse
+	});
+	
+	newProfessor.save(function(err, user) {
+		if (err) {
+			console.log(err.errors);
+		    result = { success: false, message: "Professor was not added!" }
+		    res.send(result);
+		} else {
+			console.log("Successfully added professor!");
+			console.log(user);
+			result = { success: true, message: "Professor has succesfully been added!" }
+			res.send(result);
 		}
 	});
 });

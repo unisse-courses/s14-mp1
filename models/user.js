@@ -13,11 +13,11 @@ const options = {
 mongoose.connect(databaseURL, options);
 
 var userSchema = new Schema({
-	studentName: {type: String},
-	studentId: {type: Int32},
-	password: {type: String},
-	isAdmin: {type: Boolean},
-	isBanned: {type: Boolean}
+	studentName: {type: String, required: true},
+	studentId: {type: Int32, required: true},
+	password: {type: String, required: true},
+	isAdmin: {type: Boolean, required: true},
+	isBanned: {type: Boolean, required: true}
 });
 
 module.exports = mongoose.model('user', userSchema, 'user');
