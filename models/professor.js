@@ -47,7 +47,7 @@ exports.getAll = function(sort, next) {
 	});
 };
 
-exports.find = function(query, limit next) {
+exports.find = function(query, limit, next) {
 	professorModel.find(query).limit(15).exec(function(err, result){
 		if (err) throw err;
 		var professorObject = [];

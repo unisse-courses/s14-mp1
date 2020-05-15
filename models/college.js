@@ -45,7 +45,7 @@ exports.getAll = function(query, next) {
 	});
 };
 
-exports.find = function(query, limit next) {
+exports.find = function(query, limit, next) {
 	collegeModel.find(query).limit(15).exec(function(err, result){
 		if (err) throw err;
 		var collegeObject = [];

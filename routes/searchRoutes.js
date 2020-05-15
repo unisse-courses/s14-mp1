@@ -2,7 +2,7 @@
 const router = require('express').Router();
 
 //Import Controller
-const searchController = require('../controllers/search');
+const searchController = require('../controllers/searchController');
 
 //API
 router.get('/', searchController.find);
