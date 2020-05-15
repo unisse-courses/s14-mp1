@@ -67,7 +67,6 @@ window.addEventListener('load', () => {
           var delay = 500; 
           setTimeout(function(){location.reload(true)}, delay);
         } else {
-          $('#msg').addClass('text-danger');
           $('#msg').removeClass('text-success');
           $('#msg').text(data.message);
         }
@@ -211,10 +210,12 @@ window.addEventListener('load', () => {
     });
   });
 
-  //FRONTEND - EDIT POST / COMMENT
+  //FRONTEND & BACKEND - EDIT/DELETE FUNCT POST / COMMENT / PROF/ USER /COLLEGE
   $(document).on('click', 'button[data-id]', function (e) {
     var funct = $(this).data('funct');
     var id = $(this).data('id');
+
+//    alert(id + " '" + funct + "'");
 
     if (funct == 'editPost' || funct == 'editComment') {
       var content = $(this).data('content');
@@ -234,6 +235,44 @@ window.addEventListener('load', () => {
       }
     }
 
+  if (funct == 'editProf')
+  {
+    var name = $(this).data('name');
+    var course = $(this).data('course');
+    var id = $(this).data('id');
+    var college = $(this).data('college');
+    var gender = $(this).data('gender');
+    //console.log(name);
+
+    document.getElementById('modalprofRef').value = id;
+    document.getElementById('modalProfName').value = name;
+    document.getElementById('modalProfCourse').value = course;
+    document.getElementById('modalCollege').value = college;
+    document.getElementById('modalGender').value = gender;
+  }
+
+  /*
+  if (funct = 'editCollege'){
+    var short = $(this).data('short');
+    var long = $(this).data('long');
+
+    document.getElementById('modalCollegeRef').value = id;
+    document.getElementById('modalCollegeLong').innerHTML = long;
+    document.getElementById('modalCollegeShort').innerHTML =short;
+  }
+  */
+
+  if (funct == 'banUser'){
+    document.getElementById('modalBanUser').value = id;
+  }
+
+    if (funct == 'deleteUser'){
+      document.getElementById('modalDeleteUserRef').value = id;
+    }
+    if (funct == 'deleteProf'){
+      document.getElementById('modalDeleteProf').value = id;
+    }
+
     if(funct == 'deletePost'){
         document.getElementById('modalDeleteReviewRef').value = id;
     }
@@ -241,23 +280,28 @@ window.addEventListener('load', () => {
     if(funct == 'deleteComment'){
         document.getElementById('modalDeleteCommentRef').value = id;
     }
+
+    if(funct == 'deleteCollege'){
+        document.getElementById('modalDeleteCollegeRef').value = id;
+    }
+
   });
 
-  //FRONTEND - EDIT POST (CLOSE)
+  //FRONTEND & BACKEND - EDIT POST (CLOSE)
   $('#editPostClose').click(function(){
     document.getElementById('modalCommentContent').innerHTML = ""; 
     document.getElementById('modalEditPostCourse').value = "";  
     document.getElementById('modalEditPostProfessor').value = "";    
   });
 
-  //FRONTEND - EDIT COMMENT (CLOSE)
+  //FRONTEND & BACKEND - EDIT COMMENT (CLOSE)
   $('#editCommentClose').click(function () {
     document.getElementById('modalCommentContent').innerHTML = "";
     document.getElementById('modalEditCommentCourse').value = "";
     document.getElementById('modalEditCommentProfessor').value = "";
   });
 
-  // FRONT END - EDIT POST (SAVE)
+  // FRONT END & BACKEND - EDIT POST (SAVE)
   $('#savePost').click(function() {
     var post = {
       reviewRef: $('#modalReviewRef').val(),
@@ -279,7 +323,7 @@ window.addEventListener('load', () => {
     setTimeout(function(){location.reload(true)}, delay);
   });
 
-  // FRONT END - EDIT COMMENT (SAVE)
+  // FRONT END & BACKEND - EDIT COMMENT (SAVE)
   $('#saveComment').click(function () {
     var comment = {
       id: $('#modalCommentRef').val(),
@@ -301,7 +345,8 @@ window.addEventListener('load', () => {
     setTimeout(function(){location.reload(true)}, delay);
   });
 
-  //FRONT END - DELETE POST
+
+  //FRONT END & BACK END - DELETE POST
   $('#deletePost').click(function () {
     var post = {
       id: $('#modalDeleteReviewRef').val()
@@ -320,7 +365,7 @@ window.addEventListener('load', () => {
     });
   });
 
-  //FRONT END - DELETE COMMENT
+  //FRONT END & BACKEND - DELETE COMMENT
   $('#deleteComment').click(function () {
     var comment = {
       id: $('#modalDeleteCommentRef').val()
@@ -335,6 +380,104 @@ window.addEventListener('load', () => {
         $('#msgDel2').addClass('text-danger');
         $('#msgDel2').removeClass('text-success');
         $('#msgDel2').text('Error in delete comment!');
+      }
+    });
+  });
+
+  //BACK-END DELETE USER
+
+  $('#deleteUserBtn').click(function () {
+    var user = {
+      id: $('#modalDeleteUserRef').val()
+    };
+    $.post('/deleteUser', user, function (data, status) {
+      if (data.success) {
+        $('#msgDel2').addClass('text-success');
+        $('#msgDel2').removeClass('text-danger');
+        $('#msgDel2').text('Successfully deleted user!');
+        location.reload();
+      } else {
+        $('#msgDel2').addClass('text-danger');
+        $('#msgDel2').removeClass('text-success');
+        $('#msgDel2').text('Error in deleting user!');
+      }
+    });
+  });
+
+//BACK-END DELETE COLLEGE
+$('#deleteCollege').click(function () { 
+  var college = {
+    id: $('#modalDeleteCollegeRef').val()
+  };
+  //alert(college.id);
+  $.post('/deleteCollege', college, function (data, status) {
+    //console.log(data);
+    if (data.success) {
+      $('#msg').addClass('text-success');
+      $('#msg').removeClass('text-danger');
+      $('#msg').text('Successfully deleted college!');
+      location.reload();
+    } else {
+      $('#msg').addClass('text-danger');
+      $('#msg').removeClass('text-success');
+      $('#msg').text('Error in deleting college!');
+    }
+  });
+});
+
+  //EDIT PROFESSOR SAVE
+
+  $('#editProfBtn').click(function(){
+    var prof ={
+      id: $('#modalprofRef').val(),
+      name: $('#modalProfName').val(),
+      course: $('#modalProfCourse').val(),
+      college: $('#modalCollege').val(),
+      gender: $('#modalGender').val()
+    };
+    $.post('/editProfessor', prof, function (data, status){
+      console.log(data);
+    });
+    var delay = 500; 
+    setTimeout(function(){location.reload(true)}, delay);
+  });
+
+  //EDIT COLLEGE SAVE
+  /*
+  $('#editCollegeBtn').click(function(){
+    var college = {
+      id: $('#modalCollegeRef').val(),
+      long: $('#modalCollegeLong').val(),
+      short: $('#modalCollegeShort').val()
+    };
+    $.post('/editCollege', college, function(data) {
+      console.log(data);
+    });
+    var delay = 500; 
+    setTimeout(function(){location.reload(true)}, delay);
+  });
+  */
+
+  //BAN USER
+  $('#banUserBtn').click(function(){
+    var user = {
+      id: $('#modalBanUser').val()
+    };
+    alert(user);
+    $.post('/banUser', user, function(data){
+      if (data.success){
+        location.reload();
+      }
+    });
+  });
+  //DELETE PROFESSOR 
+  $('#deleteProfbtn').click(function(){
+    var prof = {
+      id: $('#modalDeleteProf').val()
+    };
+    $.post('/deleteProf', prof, function (data,status) {
+      if (data.success){
+        location.reload();
       }
     });
   });
@@ -412,4 +555,68 @@ window.addEventListener('load', () => {
     newUrl += "/";
     history.replaceState(null, null, newUrl);
   });
+
+
+
+  // PAGINATION TABLES
+  function defaultAdminTable() {
+    var totalRows = $('#myTable tbody tr').length;
+    var pages = totalRows / 15;
+    var pageList = document.getElementById('paging');
+    var item = "";
+
+    $('#myTable tbody tr').hide().slice(0, 15).show()
+
+    for (var i = 1; i <= pages; i++) {
+      item += '<li class="page-item"><a class="page-link">' + i + '</a></li>';
+    }
+    pageList.innerHTML = item;
+
+    $('#paging li').on("click", function () {
+      var pageNum = $(this).text();
+      var x = parseInt(pageNum);
+      //console.log (pageNum);
+      //console.log(x);
+
+      var start = 15 * x;
+      var end = start + 15;
+
+      $('#myTable tbody tr').hide().slice(start, end).show();
+    });
+
+  }
+
+  defaultAdminTable();
+
+  //COMMENT PAGINATION TABLE
+
+  function defaultAdminTable2() {
+    var totalRows = $('#myTable2 tbody tr').length;
+    var pages = totalRows / 10;
+    var pageList = document.getElementById('paging2');
+    var item = "";
+
+    $('#myTable2 tbody tr').hide().slice(0, 10).show()
+
+    for (var i = 1; i <= pages; i++) {
+      item += '<li class="page-item"><a class="page-link">' + i + '</a></li>';
+    }
+    pageList.innerHTML = item;
+
+    $('#paging2 li').on("click", function () {
+      var pageNum = $(this).text();
+      var x = parseInt(pageNum);
+      //console.log (pageNum);
+      //console.log(x);
+
+      var start = 10 * x;
+      var end = start + 10;
+
+      $('#myTable2 tbody tr').hide().slice(start, end).show();
+    });
+
+  }
+
+  defaultAdminTable2();
+
 });

@@ -139,7 +139,7 @@
 		<div class="tab-content mytab-content" id="myTabContent">
     		<div class="tab-pane fade show active" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
     			<!-- REVIEWS PANE -->
-    			<table class="table table-hover table-light mb-0">
+    			<table id ="myTable" class="table table-hover table-light mb-0">
 		            <thead class="thead-green">
 		               	<tr>
 		                	<th scope="col"></th>
@@ -181,10 +181,16 @@
 		            {{/each}}
 		            </tbody>
 		         </table>
+
+				 
+				 <nav aria-label="Page navigation example">
+            <ul id="paging" class="mt-2 mb-0 pagination justify-content-center">
+            </ul>
+          </nav>
 			</div>
 			<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
 		    <!-- COMMENT PANE -->
-			    <table class="table table-hover table-light mb-0">
+			    <table id="myTable2" class="table table-hover table-light mb-0">
 		            <thead class="thead-green">
 		            	<tr>
 		                  	<th scope="col"></th>
@@ -226,6 +232,10 @@
 		            {{/each}}
 		            </tbody>
 		        </table>
+				<nav aria-label="Page navigation example">
+            <ul id="paging2" class="mt-2 mb-0 pagination justify-content-center">
+            </ul>
+          </nav>
 			</div>
 		</div>
 	</div>

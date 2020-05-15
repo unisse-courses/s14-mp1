@@ -22,4 +22,54 @@ var reviewSchema = new Schema({
 	reviewContent: {type: String, required: true}
 });
 
-module.exports = mongoose.model('review', reviewSchema);
+const reviewModel = mongoose.model('review', reviewSchema);
+
+exports.getAll = function(query, next) {
+	reviewModel.find(query).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result){
+		var reviewObject = [];
+
+		result.forEach(function(document){
+			reviewObject.push(document.toObject());
+		});
+
+		next(reviewObject);
+	});
+};
+
+
+exports.getAllLean = function(query) {
+	return reviewModel.find(query).populate('profRef').populate('studentRef').sort({_id:-1}).lean().exec();
+};
+
+exports.getRev = function(query, next) {
+	reviewModel.findOne(query).populate('profRef').populate('studentRef').exec(function(err, result){
+		if (err) throw err;
+		next(result);
+	});
+};
+
+exports.getLimited = function(limit, next) {
+	reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).limit(limit).exec(function(err,result){
+		if (err) throw err;
+		var reviewObject = [];
+
+		result.forEach(function(document){
+			reviewObject.push(document.toObject());
+		});
+
+		next(reviewObject);
+	});
+};
+
+exports.getProf = function(profRef, next) {
+	reviewModel.find(profRef).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err, result){
+		if (err) throw err;
+		var reviewObject = [];
+
+		result.forEach(function(document){
+			reviewObject.push(document.toObject());
+		});
+
+		next(reviewObject);
+	});
+};

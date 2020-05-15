@@ -19,4 +19,34 @@ var commentSchema = new Schema({
 	commentContent: {type: String, required: true},
 });
 
-module.exports = mongoose.model('comment', commentSchema);
+const commentModel = mongoose.model('comment', commentSchema);
+
+exports.getAll = function(query, next) {
+	commentModel.find(query).populate('reviewRef').populate('studentRef').exec(function(err, result){
+		if (err) throw err;
+		var commentObject = [];
+
+		result.forEach(function(document){
+			commentObject.push(document.toObject());
+		});
+
+		next(commentObject);
+	});
+};
+
+exports.getAllProfile = function(query, next) {
+	commentModel.find(query).populate({path: 'reviewRef', model: 'review', populate: { path: 'profRef', model: 'professor'}}).populate('studentRef').sort({_id:-1}).exec(function(err, result){
+		var commentObject = [];
+		var comment;
+
+		result.forEach(function(document){
+			comment = document.toObject();
+			comment['profDetails'] = document.reviewRef.profRef.toObject();
+			commentObject.push(comment);
+		});
+	});
+};
+
+exports.countAll = function(query) {
+	return commentModel.countDocuments(query).populate('reviewRef').populate('studentRef');
+};

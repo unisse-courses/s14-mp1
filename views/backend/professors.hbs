@@ -1,10 +1,93 @@
 {{>jumbotron}}
 
+<!-- MODALS -->
+<!-- UPDATE PROF -->
+<div class="modal fade" id="modalupdateprof" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Update Professor</h4>
+        <button id= "modalEditProfClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="survey-head text-center"> 
+              <p><span class="font-weight-bold">Fill out the Following Information</span></p>
+        </div>
+        <input id="modalprofRef" name="modalprofRef" hidden>
+        <div class="md-form mb-5">
+          <textarea id="modalProfName" name = "modalProfName" rows = "1" class="form-control validate"></textarea>
+          <label data-error="wrong" data-success="right">Name</label>
+        </div>
+        <div class="md-form mb-5">
+          <textarea id="modalProfCourse"  rows = "1" class="form-control validate"></textarea>
+          <label data-error="wrong" data-success="right">Course</label>
+        </div>
+      <div class="md-form mb-4">
+           <select id = "modalCollege" class="form-control">
+             <option>CLA</option>
+             <option>COB</option>
+             <option>COS</option>
+             <option>CED</option>
+             <option>SOE</option>
+             <option>COE</option>
+             <option>CCS</option>
+           </select>
+          <label data-error="wrong" data-success="right">College</label>
+        </div>
+      <div class="md-form mb-4">
+         <select id="modalGender" class="form-control">
+           <option>Male</option>
+           <option>Female</option>
+          </select>
+        <label data-error="wrong" data-success="right">Gender</label>
+      </div>
+       </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button id="editProfBtn" class="btn btn-primary btn-sm text-white">Update Professor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE PROFESSOR -->
+<div class="modal fade" id="modaldeleteprof" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Delete User</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="survey-head text-center"> 
+              <p><span class="font-weight-bold">Warning:</span> Deleting a professor means the professor's information will also be deleted, <span class="font-weight-bold">and this action cannot be undone</span>
+              </p>
+        </div>
+      </div>
+      
+      <div class="modal-body mx-3">
+        <h5 class = "text-center"><span class="font-weight-bold">Are you sure you want to delete this professor?</span></h5>
+    </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <input type="hidden" id="modalDeleteProf" name="modalDeleteProf">
+        <button id="deleteProfbtn" class="btn btn-primary btn-sm text-white">Delete College</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- END OF MODALS -->
+
 <div class="row mt-sm-4 mt-md-0">
 
   <div class="col-sm-12 col-md-8">
     <h3>Professor Information</h3>
-    <table class="table table-hover table-light mb-5">
+    <table id="myTable" class="table table-hover table-light mb-5">
     <thead class="thead-green">
       <tr class="text-center">
         <th scope="col">Name</th>
@@ -21,12 +104,36 @@
           <td>{{this.college}}</td>
           <td>{{this.profCourse}}</td>
           <td>{{this.count}}</td>
-          <td><a class="btn btn-primary btn-sm text-white" href="/professors/{{this.profNumber}}">Go to Profile</a></td>
+          <td>
+            <!-- CALLING MODALS -->
+            <button class="btn btn-primary btn-sm text-white dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+		          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              	<button class="dropdown-item" class="text-center" data-toggle="modal" data-target="#modalupdateprof" 
+		              data-funct = "editProf"
+		              data-id= "{{this._id}}"
+		              data-name = "{{this.profName}}"
+		              data-course = "{{this.profCourse}}"
+                  data-college = "{{this.college}}"
+                  data-gender = "{{this.gender}}"
+		            >Update Professor</button>
+		            <button class="dropdown-item" class="text-center" data-toggle="modal" data-target="#modaldeleteprof"
+		              data-funct = "deleteProf"
+		              data-id= "{{this._id}}"
+		            >Delete Professor</button>
+		          </div>
+            <!-- -->
+          </td>
         </tr>
       {{/each}}
     </tbody>
   </table>
+  <nav aria-label="Page navigation example">
+            <ul id="paging" class="pagination justify-content-center">
+            </ul>
+          </nav>
   </div>
+
+  <!-- Add Professor -->
 
   <div class="col-sm-12 col-md-4">
     <h3 class="text-center" id="addCollege">Add Professor</h3>

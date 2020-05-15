@@ -1,9 +1,5 @@
 {{>jumbotron}}
 
-<script>
-  window.studentRef = "{{session.studentRef}}";
-</script>
-
 <div class="row mt-sm-4 mt-md-0">
 	<div class="col-sm-12 col-md-8">
     	<div class="card mb-4">
@@ -45,27 +41,28 @@
   			</div>
 	      	<div class="card-body">
 		      	<form>
+		     	 	<p id="reviewRef" name="reviewRef" hidden>{{review._id}}</p>
+		      		<p id="studentRef" name="studentRef" hidden>{{session.studentRef}}</p>
 		        	<div class="form-group row">
-			            <label for="commProf" class="col-sm-4 col-form-label">Professor</label>
-			            <select class="custom-select col-sm-7" disabled id="commProf">
+			            <label for="quickProf" class="col-sm-4 col-form-label">Professor</label>
+			            <select class="custom-select col-sm-7" disabled id="profRef">
 			              <option selected>{{review.profRef.profName}}</option>
 			        	</select>
 			        </div>
 			        <div class="form-group row">
-			            <label for="commRN" class="col-sm-4 col-form-label">RN</label>
-			            <select class="custom-select col-sm-7" disabled id="commRN">
+			            <label for="quickProf" class="col-sm-4 col-form-label">RN</label>
+			            <select class="custom-select col-sm-7" disabled id="quickProf">
 			              <option selected>{{review._id}}</option>
 			        	</select>
 			        </div>
 		          	<div class="form-group row">
-			            <label for="commContent" class="col-sm-4 col-form-label">Comment</label>
-			            <textarea id="commContent" class="form-control col-sm-7" rows="3"></textarea>
+			            <label for="quickRev" class="col-sm-4 col-form-label">Comment</label>
+			            <textarea class="form-control col-sm-7" id="commentContent" rows="3"></textarea>
 			        </div>
 			        <div class="text-center">
-			            <button id="commentBtn" class="btn btn-primary mt-0 mb-2">Post Comment</button>
+			            <button type="submit" id = "addComment" name ="addComment" class="btn btn-primary mt-0 mb-2">Post Comment</button>
 			        </div>
 		    	</form>
-		    	<p id="msg" class="text-danger mb-0 mt-2 text-center"></p>
 	    	</div>
 		</div>
 	</div>

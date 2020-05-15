@@ -9,6 +9,16 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var bcrypt = require('bcrypt');
+var fileUpload = require('express-fileupload'); //npm i express-fileupload
+
+//Import Routers
+const rootRouter = require('./routes/rootRoutes');
+const collegesRouter = require('./routes/collegesRoutes');
+const professorsRouter = require('./routes/professorsRoutes');
+const reviewsRouter = require('./routes/reviewsRoutes');
+const profileRouter = require('./routes/profileRoutes');
+const loginRouter = require('./routes/loginRoutes');
+const logoutRouter = require('./routes/logoutRoutes');
 
 //Import Models
 const collegeModel = require('./models/college');
@@ -16,6 +26,7 @@ const commentModel = require('./models/comment');
 const professorModel = require('./models/professor');
 const userModel = require('./models/user');
 const reviewModel = require('./models/review');
+const fallbackModel = require('./models/fallback');
 
 //Environments Configuration
 app.set('view engine', 'hbs');
@@ -56,346 +67,14 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 //Route Definition
-app.get('/', function(req, res){
-	if (req.session.loggedin){
-	 	professorModel.aggregate([{ $sample: { size: 3 } }]).then(function(qvProfs) {
-	 		reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).limit(10).exec(function(err,mostRecent) {
-	 			collegeModel.find({}).exec(function(err, col){
-					var colleges = [];
-					var reviews = [];
-
-					col.forEach(function(document){
-						colleges.push(document.toObject());
-					});
-
-		 			mostRecent.forEach(function(document){
-						reviews.push(document.toObject());
-					});
-
-					res.render('frontend/home',{
-						session: req.session,
-						colleges: colleges,
-				    	data: qvProfs,
-				    	review: reviews,
-						title: 'Home',
-						jumbotronImage: '/assets/headers/home_header.jpg',
-						jumbotronHeader: 'Welcome to CommForum',
-						jumbotronMessage: 'This online platform aims to address all the concerns, judgment, and comments made by the students and alumni while maintaining a healthy and non-toxic environment in which the Lasallian Core Values are portrayed.',
-						jumbotronLink: '/colleges',
-						jumbotronBtn: 'View Colleges'
-			    	});
-	 			});
-			});
-		});
- 	} else{
- 		res.redirect('/login')
- 	};
-});
-
-app.get('/colleges', function(req, res){
-	if (req.session.loggedin){
-		collegeModel.find({}).exec(function(err, result){
-			var collegeObjects = [];
-
-			result.forEach(function(document){
-				collegeObjects.push(document.toObject());
-			});
-
-		  	res.render('frontend/colleges',{
-		  		session: req.session,
-		  		data: collegeObjects,
-				title: 'Colleges',
-				jumbotronImage: '/assets/headers/college_header.jpg',
-				jumbotronHeader: 'Colleges',
-				jumbotronMessage: 'De La Salle University has 7 Colleges with different specializations in which aims to hone the skills of diverse individuals in their track. These Colleges are each catered to developing the interior and exterior knowledge needed by an individual to be a fully-pledged Lasallian leader.',
-				jumbotronLink: '/professors',
-				jumbotronBtn: 'View Professors'
-			});
-		});
-	} else{
-		res.redirect('/login')
-	}
-});
-
-app.get('/colleges/:college', function(req, res){
-	if (req.session.loggedin){
-		const link = req.params.college.toUpperCase();
-
-		collegeModel.findOne({shortName: link}, function(err, college) {
-			if(college === null){
-				res.render('frontend/error',{
-					session: req.session,
-					error: '404',
-	  				message: "The Page can't be found"
-				});
-			} else{
-				res.render('frontend/colpage',{
-					session: req.session,
-					college: college.toObject(),
-					jumbotronImage: '/assets/headers/colpage_header.jpg',
-					jumbotronHeader: college.longName,
-					jumbotronMessage: 'The ' + college.longName +' offers different degree programs in which aim to hone the skills of each individual and help them articulate the knowledge being dealt with them while striving to apply the Lasallian Core Values, which will resemble the breeding ground for the future Lasallian leaders.',
-					jumbotronLink: '/colleges/' + college.shortName + '/professors',
-					jumbotronBtn: 'View ' + college.shortName + ' Professors',
-					title: link
-				});
-			}
-		});
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/colleges/:college/professors', function(req, res){
-	if (req.session.loggedin){
-		const link = req.params.college.toUpperCase();
-
-		professorModel.find({college: link}).exec(function(err, result){
-			var professorObject = [];
-
-			result.forEach(function(document){
-				professorObject.push(document.toObject());
-			});
-
-			if(professorObject.length === 0){
-				res.render('frontend/error',{
-					session: req.session,
-					error: '404',
-	  				message: "The Page can't be found"
-				});
-			}
-			else{
-				res.render('frontend/professors',{
-					session: req.session,
-					professor: professorObject,
-					title: link + ' Professors',
-			      	jumbotronImage: '/assets/headers/colpage_header.jpg',
-					jumbotronHeader: link + ' Professors',
-					jumbotronMessage: 'The College of Liberal Arts has professors that promise to share all their knowledge and tools to effectively aid students in being graduates of their desired programs while embodying the Lasallian Core Values.',
-					jumbotronLink: '/',
-					jumbotronBtn: 'Back to Homepage',
-				});
-			}
-		});
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/professors', function(req, res){
-	if (req.session.loggedin){
-		professorModel.find({}, null, {sort: {profName: 1}}).exec(function(err, result){
-			var professorObject = [];
-
-			result.forEach(function(document){
-				professorObject.push(document.toObject());
-			});
-
-			if(professorObject.length === 0){
-				res.render('frontend/error',{
-					session: req.session,
-					error: '404',
-	  				message: "The Page can't be found"
-				});
-			}
-			else{
-				res.render('frontend/professors',{
-					session: req.session,
-					professor: professorObject,
-					title: 'Professors',
-			      	jumbotronImage: '/assets/headers/colpage_header.jpg',
-					jumbotronHeader: 'Professors',
-					jumbotronMessage: 'The Professors of De La Salle University aims to provide all the students with the necessary learning tools in obtaining knowledge to maximize all the skills and talents one must possess before being deployed to their chosen careers.',
-					jumbotronLink: '/',
-					jumbotronBtn: 'Back to Homepage',
-				});
-			}
-		});
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/professors/:id', function(req, res){
-	if (req.session.loggedin){
-		const link = req.params.id;
-
-		professorModel.findOne({profNumber: link}, function(err, professor) {
-			if(professor === null){
-				res.render('frontend/error',{
-					session: req.session,
-					error: '404',
-	  				message: "The Page can't be found"
-				});
-			}
-			else{
-				var profData = professor.toObject();
-				reviewModel.find({profRef: profData._id}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result) {
-		 			var reviews = [];
-
-		 			result.forEach(function(document){
-						reviews.push(document.toObject());
-					});
-
-					collegeModel.findOne({shortName: profData.college}, function(err,college) {
-						res.render('frontend/profpage',{
-							session: req.session,
-							studentRef: req.session.studentRef,
-							studentId: req.session.idNum,
-							professor: profData,
-							college: college.toObject(),
-							reviews: reviews,
-							jumbotronImage: '/assets/headers/profpage_header.jpg',
-							jumbotronHeader: profData.profName,
-							jumbotronMessage: 'An exemplary Lasallian educator who teach minds, touch hearts, and transform lives by diligently teaching ' + profData.profCourse + ' from the ' + college.longName + '.',
-							jumbotronLink: '/',
-							jumbotronBtn: 'Back to Homepage',
-							title: profData.profName
-						});
-					});
-	 			});
-			}
-		});
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/reviews', async function(req,res){
-	if (req.session.loggedin){
-		const reviewRes = await reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).lean().exec();
-		const resultPromises = reviewRes.map(async review => {
-    		const commentCount = await commentModel.countDocuments({ reviewRef: review._id }).populate('reviewRef').populate('studentRef');
-			review.count = commentCount;
-			return review;
-  		});
-		const reviewObject = await Promise.all(resultPromises);
-
-		collegeModel.find({}).exec(function(err, col){
-			var colleges = [];
-			col.forEach(function(document){
-				colleges.push(document.toObject());
-			});
-		
-			res.render('frontend/reviews', {
-				session: req.session,
-				review: reviewObject,
-				colleges: colleges,
-				title: 'Reviews',
-				jumbotronImage: '/assets/headers/profpage_header.jpg',
-				jumbotronHeader: 'Reviews',
-				jumbotronMessage: 'The review page displays all the reviews made by the students and alumni regarding relevant experiences and interactions with the university professors.',
-				jumbotronLink: '/',
-				jumbotronBtn: 'Back to Homepage'
-			});
-		});
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/reviews/:id', function(req,res){
-	if (req.session.loggedin){
-		const link = req.params.id;
-
-		reviewModel.findOne({_id: link}).populate('profRef').populate('studentRef').exec(function(err, review){
-			if(review === null){
-				res.render('frontend/error',{
-					session: req.session,
-					error: '404',
-	  				message: "The Page can't be found"
-				});
-			}
-			else{
-				collegeModel.findOne({shortName: review.profRef.college}, function(err,college) {
-					commentModel.find({reviewRef: review._id}).populate("reviewRef").populate("studentRef").exec(function(err, result){
-						var commentObject = [];
-						result.forEach(function(document){
-							commentObject.push(document.toObject());
-						});
-						res.render('frontend/revpage', {
-							session: req.session,
-							comment: commentObject,
-							college: college.toObject(),
-							review: review.toObject(),
-							title: "Review on " + review.profRef.profName,
-							jumbotronImage: '/assets/headers/profpage_header.jpg',
-							jumbotronHeader: review.profRef.profName,
-							jumbotronMessage: 'An exemplary Lasallian educator who teach minds, touch hearts, and transform lives by diligently teaching ' + review.profRef.profCourse + ' from the ' + college.longName + '.',
-							jumbotronLink: '/',
-							jumbotronBtn: 'Back to Homepage'
-						});
-					});
-				});
-			}
-		}); 
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/profile', function(req, res){
-	if (req.session.loggedin){
-		reviewModel.find({studentId: req.session.idNum}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result1) {
-		 	var reviewObject = [];
-
-			result1.forEach(function(document){
-				reviewObject.push(document.toObject());
-			});
-
-			commentModel.find({studentRef: req.session.studentRef}).populate({path: 'reviewRef', model: 'review', populate: { path: 'profRef', model: 'professor'}}).populate('studentRef').sort({_id:-1}).exec(function(err, result2){
-				var commentObject = [];
-				var comment;
-
-				result2.forEach(function(document){
-					comment = document.toObject();
-					comment['profDetails'] = document.reviewRef.profRef.toObject();
-					commentObject.push(comment);
-				});
-
-				res.render('frontend/profile',{
-					session: req.session,
-					reviews: reviewObject,
-					comments: commentObject,
-					title: 'Profile',
-					session: req.session,
-					jumbotronImage: '/assets/headers/user_header.jpg',
-					jumbotronHeader: 'Hello ' + req.session.nickname + ',',
-					jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
-					jumbotronBtn: 'Back to Homepage',
-					jumbotronLink: '/'
-				});
-			});
-		});
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/login', function(req,res) {
-	if (req.session.loggedin) {
-		res.render('frontend/error',{
-			session: req.session,
-			error: '403',
-	  		message: "The Page is forbidden"
-		});
-	}
-	else {
-		res.render('login',{
-			title: 'Log In',
-			layout: 'authenticate'
-		});
-	}
-});
-
-app.get('/logout', function(req,res) {
-	req.session.destroy();
-	res.render('login',{
-		title: 'Log In',
-		layout: 'authenticate'
-	});
-	console.log('You have succesfully logged out.');
-});
+app.use('/', rootRouter);
+app.use('/colleges', collegesRouter);
+app.use('/professors', professorsRouter);
+app.use('/reviews', reviewsRouter);
+app.use('/profile', profileRouter);
+app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
+app.use('/search', searchRouter);
 
 //Backend Routes
 app.get('/cf-admin', function(req,res) {
@@ -527,11 +206,11 @@ app.get('/cf-admin/professors', async function(req,res) {
 
 		  	collegeModel.find({}).exec(function(err, col){
 				var colleges = [];
-				
+
 				col.forEach(function(document){
 					colleges.push(document.toObject());
 				});
-				
+
 				res.render('backend/professors',{
 					colleges: colleges,
 					session: req.session,
@@ -642,15 +321,15 @@ app.get('/cf-profile', function(req, res){
 //Logical GET Methods
 app.get('/getCourseByCollege', function(req, res) {
 	var selectedCollege = req._parsedUrl.query;
-		
+
 	professorModel.find({ college: selectedCollege }).distinct('profCourse', function(err, result) {
 		res.send(result);
 	});
 });
-	
+
 app.get('/getProfByCourse', function(req, res) {
 	var selectedCourse = req._parsedUrl.query;
-	
+
 	professorModel.find({ profCourse: selectedCourse }).select('profName profNumber _id').exec(function(err, result) {
 		res.send(result);
 	});
@@ -658,13 +337,122 @@ app.get('/getProfByCourse', function(req, res) {
 
 app.get('/getProfDetails', function(req, res) {
 	var data = req.query;
-	
+
 	professorModel.findOne({ profCourse: data.profCourse, profName: data.profName }).select('_id profNumber').exec(function(err, result) {
 		res.send(result);
 	});
 });
 
+app.get('/getSecQuestion', function(req, res){
+	var id = req._parsedOriginalUrl.query;
+
+	fallbackModel.findOne({studentId: id}, function(err, result){
+		var data;
+		if (err)
+		{
+			console.log(err.errors);
+		}
+		else {
+			//console.log(result);
+
+			if(result === null){
+			   data = "No User Found!";
+			}
+			else{
+				data = {
+					question: result.question,
+					answer: result.answer
+				}
+			}
+
+			res.send(data);
+		}
+	});
+});
+
+app.get('/verifySecAnswer', function(req, res){
+	var id = req.query.id;
+	var answer = req.query.answer;
+
+	//console.log(id + " "  + answer + " " + req.query);
+
+	fallbackModel.findOne({studentId: id}, function(err, result){
+		var data;
+		if (err)
+		{
+			console.log(err.errors);
+		}
+		else {
+			//console.log(result);
+
+			if(result === null){
+			  	data = "Answers mismatch!";
+			}
+			else{
+				if( bcrypt.compareSync(answer, result.answer) ){
+					data = true;
+				}
+				else{
+			  		data = "Answers mismatch!";
+				}
+			}
+			res.send(data);
+		}
+	});
+
+});
+
 //POST Methods
+app.post('/setNewPassword', function(req, res) {
+
+	var id = req.body.id;
+	var password = req.body.password;
+	console.log(id + " " + password);
+
+	userModel.findOne({studentId: id}, function(err, doc){
+		var result;
+		if(err){
+			console.log(err.errors);
+			result = { success: false, message: "Password was not successfully changed!" }
+			res.send(result);
+		} else{
+			doc.password = bcrypt.hashSync(password, 10);
+			doc.save();
+			console.log("Successfully changed password!");
+			console.log(doc);
+			result = { success: true, message: "Password changed!" }
+			res.send(result);
+		}
+	});
+});
+
+app.post('/addSecurity', function (req, res){
+	var newSecurity = new securityModel ({
+		studentId: req.body.idNum,
+		securityQ1: req.body.securityQ1,
+        securityQ2: req.body.securityQ2,
+        securityQ3: req.body.securityQ3
+	});
+	securityModel.findOne({studentId: newSecurity.studentId}, function(err){
+		if (err) {
+			console.log(err.errors);
+			res.send(result);
+		}
+		else {
+			newSecurity.save(function(err, data) {
+				if (err){
+					console.log(err.errors);
+					res.send(result);
+				}
+				else {
+					console.log('Security added Successfully');
+					console.log(data);
+					res.send(result);
+				}
+			});
+		}
+	});
+});
 app.post('/auth', function(req,res) {
 	var user = {
     	studentId: req.body.studentId,
@@ -692,7 +480,7 @@ app.post('/auth', function(req,res) {
 			} else {
 				result = { status: 0, success: false, message: "Password incorrect! Please try again." }
 				res.send(result);
-			} 
+			}
 		} else {
 			result = { status: -1, success: false, message: "Username not found! Please try again." }
 			res.send(result);
@@ -737,6 +525,29 @@ app.post('/addUser', function(req, res) {
 	});
 });
 
+app.post('/addFallback', function (req, res){
+	var hash = bcrypt.hashSync(req.body.securityA,10);
+	var newSecurity = new fallbackModel ({
+		studentId: req.body.idNum,
+		question: req.body.securityQ,
+        answer: hash
+	});
+	newSecurity.save(function(err, data) {
+		var result;
+		if (err){
+			console.log(err.errors);
+			result = {success: false};
+			res.send(result);
+		}
+		else {
+			console.log('Security added successfully');
+			result = {success: true};
+			console.log(data);
+			res.send(result);
+		}
+	});
+});
+
 app.post('/addProfessor', function(req, res) {
 	var newProfessor = new professorModel({
     	profName: req.body.profName,
@@ -744,7 +555,7 @@ app.post('/addProfessor', function(req, res) {
     	college: req.body.college,
     	profCourse: req.body.profCourse
 	});
-	
+
 	newProfessor.save(function(err, user) {
 		if (err) {
 			console.log(err.errors);
@@ -871,6 +682,106 @@ app.post('/saveComment', function(req, res) {
 	}
 });
 
+
+app.post('/editProfessor', function (req,res) {
+	var id = req.body.id;
+	var name = req.body.name;
+	var course = req.body.course;
+	var college = req.body.college;
+	var gender = req.body.gender;
+	//console.log(name);
+
+	professorModel.findOne({_id: id}, function(err, data){
+		var result;
+		if (err){
+			console.log(err.errors)
+			result = { success: false, message: "Professor was not successfully saved!" }
+			res.send(result);
+		}
+		else{
+			data.profName = name;
+			data.profCourse = course;
+			data.college = college;
+			data.gender = gender;
+			data.save();
+			console.log(data);
+			result = { success: true, message: "Professor saved!" }
+			res.send(result);
+		}
+	});
+});
+/*
+app.post('/editCollege', function(req, res) {
+	var id = req.body.id;
+	var short = req.body.short;
+	var long = req.body.long;
+
+	collegeModel.findOne({_id: id}, function (err, data) {
+		var result;
+		if (err){
+			console.log(err.errors)
+			result = { success: false, message: "College was not successfully saved!" }
+			res.send(result);
+		}
+		else{
+			data.longName = long;
+			data.shortName = short;
+			data.save();
+			console.log(data);
+			result = { success: true, message: "College saved!" }
+			res.send(result);
+		}
+	});
+});
+*/
+app.post('/banUser', function (req,res) {
+	var id = req.body.id;
+	console.log(id);
+	userModel.findOne({_id: id}, function(err, data) {
+		var result;
+			if(err){
+				console.log(err.errors)
+				result = { success: false, message: "User was not successfully banned!" }
+				res.send(result);
+			}
+			else{
+				data.isBanned = true;
+				data.save();
+				console.log("User successfully banned!");
+				console.log(data);
+				result = { success: true}
+				res.send(result);
+			}
+	});
+});
+
+app.post('/deleteProf', function(req, res) {
+	var id = req.body.id;
+	reviewModel.deleteMany({ profRef: id}, function (err){
+		if(err){
+			console.log(err.errors);
+			result = {
+				success: false,
+				message: "Professor were not successfully deleted!"
+			}
+			res.send(result);
+		} else{
+			professorModel.deleteOne({ _id: id }, function (err) {
+				if(err){
+					console.log(err.errors);
+					result = { success: false, message: "Professor was not successfully deleted!" }
+					res.send(result);
+				} else {
+					console.log("Successfully deleted professor!");
+					result = { success: true, message: "Professor deleted!" }
+					res.send(result);
+				}
+			});
+	  	}
+	})
+ });
+
+
 app.post('/deletePost', function(req, res) {
 	var id = req.body.id;
 	commentModel.deleteMany({ reviewRef: id}, function (err) {
@@ -882,7 +793,7 @@ app.post('/deletePost', function(req, res) {
 			}
 			res.send(result);
 		} else{
-			reviewModel.deleteOne({ _id: id }, function (err) {	 
+			reviewModel.deleteOne({ _id: id }, function (err) {
 				if(err){
 					console.log(err.errors);
 					result = { success: false, message: "Review was not successfully deleted!" }
@@ -918,6 +829,90 @@ app.post('/deleteComment', function (req, res) {
 	});
 });
 
+app.post('/deleteUser', function (req, res) {
+	var id = req.body.id;
+	userModel.deleteOne({ _id: id }, function (err) {
+		if (err) {
+			console.log(err.errors);
+			result = {
+				success: false,
+				message: "User was not successfully deleted!"
+			}
+			res.send(result);
+		} else {
+			console.log("Successfully deleted user!");
+			result = {
+				success: true,
+				message: "User deleted!"
+			}
+			res.send(result);
+		}
+	});
+});
+
+app.post('/deleteCollege', function (req, res) {
+
+	var id = req.body.id;
+
+	collegeModel.deleteOne({ _id: id }, function (err) {
+
+		if (err) {
+			console.log(err.errors);
+
+			result = {
+				success: false,
+				message: "College was not successfully deleted!"
+			}
+			res.send(result);
+		} else {
+			console.log("Successfully deleted college!");
+
+			result = {
+				success: true,
+				message: "College deleted!"
+			}
+			res.send(result);
+		}
+	});
+});
+
+app.use(fileUpload());
+
+app.post('/addCollege', function (req, res) {
+	if (!req.files || Object.keys(req.files).length === 0) {
+		return res.status(400).send('No files were uploaded.');
+	} else {
+		var fileName = req.body.shortName;
+		var sampleFile = req.files.collegeLogo;
+		var ext = '.jpg';
+
+		if (sampleFile.mimetype == 'image/png')
+			ext = '.png'
+
+		sampleFile.mv(__dirname + '/public/assets/colleges/' + fileName + ext, function (err) {
+			if (err) {
+				return res.status(500).send(err);
+			} else {
+
+				var newCollege = new collegeModel({
+						shortName: req.body.shortName,
+					 	longName: req.body.longName,
+					 	logo: '/assets/colleges/' + fileName + ext,
+					 	contactUs:{
+							telNum: req.body.telNum,
+							faxNum: req.body.faxNum
+						},
+						aboutUs: req.body.aboutUs
+					});
+
+				newCollege.save(function(err, comment) {
+
+				});
+			}
+			res.redirect('/cf-admin/colleges');
+		});
+	}
+});
 
 app.post('/changePassword', function (req, res) {
 	var studentRef = req.session.studentRef;

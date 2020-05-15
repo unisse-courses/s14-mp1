@@ -30,4 +30,37 @@ var collegeSchema = new Schema({
 	icon: {type: String}
 });
 
-module.exports = mongoose.model('college', collegeSchema);
+const collegeModel = mongoose.model('college', collegeSchema);
+
+exports.getAll = function(query, next) {
+	collegeModel.find(query).exec(function(err, result){
+		if (err) throw err;
+		var collegeObject = [];
+
+		result.forEach(function(document){
+			collegeObject.push(document.toObject());
+		});
+
+		next(collegeObject);
+	});
+};
+
+exports.find = function(query, limit next) {
+	collegeModel.find(query).limit(15).exec(function(err, result){
+		if (err) throw err;
+		var collegeObject = [];
+
+		result.forEach(function(document){
+			collegeObject.push(document.toObject());
+		});
+
+		next(collegeObject);
+	});
+};
+
+exports.getCollege = function(query, next) {
+	collegeModel.findOne(query).exec(function(err, result){
+		if (err) throw err;
+		next(result);
+	});
+};

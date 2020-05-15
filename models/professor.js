@@ -32,4 +32,56 @@ professorSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1
 });
 
-module.exports = mongoose.model('professor', professorSchema, 'professor');
+const professorModel = mongoose.model('professor', professorSchema, 'professor');
+
+exports.getAll = function(sort, next) {
+	professorModel.find({}).sort(sort).exec(function(err, result){
+		if (err) throw err;
+		var professorObject = [];
+
+		result.forEach(function(document){
+			professorObject.push(document.toObject());
+		});
+
+		next(professorObject);
+	});
+};
+
+exports.find = function(query, limit next) {
+	professorModel.find(query).limit(15).exec(function(err, result){
+		if (err) throw err;
+		var professorObject = [];
+
+		result.forEach(function(document){
+			professorObject.push(document.toObject());
+		});
+
+		next(professorObject);
+	});
+};
+
+exports.getProf = function(profNum, next) {
+	professorModel.findOne(profNum).exec(function(err, result){
+		if (err) throw err;
+		next(result);
+	});
+};
+
+exports.getProfs = function(query, next) {
+	professorModel.find(query).exec(function(err, result){
+		if (err) throw err;
+		var professorObject = [];
+
+		result.forEach(function(document){
+			professorObject.push(document.toObject());
+		});
+
+		next(professorObject);
+	});
+};
+
+exports.getQuickView = function(sample, next) {
+	professorModel.aggregate(sample).then(function(result){
+		next(result)
+	});
+};
