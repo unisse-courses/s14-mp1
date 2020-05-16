@@ -6,7 +6,7 @@ exports.load =  function(req, res){
 	if (req.session.loggedin){
 		if (req.session.admin){
 			reviewModel.getAll({studentId: req.session.idNum}, function(reviews){
-				commentModel.getAll({studentRef: req.session.studentRef}, function(comments){
+				commentModel.getAllProfile({studentRef: req.session.studentRef}, function(comments){
 					res.render('frontend/profile',{
 						layout: 'backend',
 						session: req.session,
