@@ -51,3 +51,27 @@ exports.getAllProfile = function(query, next) {
 exports.countAll = function(query) {
 	return commentModel.countDocuments(query).populate('reviewRef').populate('studentRef');
 };
+
+
+exports.create = function(object, next) {
+	const newComment = new commentModel(object);
+	newComment.save(function(err, newComment){
+		next(err, newComment);
+	});
+}
+
+
+exports.edit = function(next){
+	commentModel.findOne({_id: id}, function(err){
+
+	});
+
+
+
+exports.delete = function(id, next) {
+
+	commentModel.deleteOne({ _id: id }, function (err) {
+		if (err) throw err;
+		next(err);
+	});
+}
