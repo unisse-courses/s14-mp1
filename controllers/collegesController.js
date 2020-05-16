@@ -80,3 +80,28 @@ exports.getProfessors = function(req, res){
 		res.redirect('/login');
 	}
 };
+
+exports.deleteCollege = function (req, res) {
+  	var id = req.body.id;
+
+  	collegeModel.deleteCollege(id, function (err) {
+
+  		if (err) {
+  			console.log(err.errors);
+
+  			result = {
+  				success: false,
+  				message: "College was not successfully deleted!"
+  			}
+  			res.send(result);
+  		} else {
+  			console.log("Successfully deleted college!");
+
+  			result = {
+  				success: true,
+  				message: "College deleted!"
+  			}
+  			res.send(result);
+  		}
+  	});
+  }

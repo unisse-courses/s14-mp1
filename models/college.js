@@ -75,3 +75,9 @@ exports.getCollege = function(query, next) {
 		next(result);
 	});
 };
+
+exports.deleteCollege = function(query, next) {
+		if (err) throw error;
+		next(err);
+	});
+}

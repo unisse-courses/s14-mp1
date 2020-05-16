@@ -52,7 +52,6 @@ exports.countAll = function(query) {
 	return commentModel.countDocuments(query).populate('reviewRef').populate('studentRef');
 };
 
-
 exports.create = function(object, next) {
 	const newComment = new commentModel(object);
 	newComment.save(function(err, newComment){
@@ -60,20 +59,15 @@ exports.create = function(object, next) {
 	});
 }
 
-
 exports.edit = function(query, next){
 	commentModel.findOne(query).populate('reviewRef').exec(function(err, result){
 		if (err) throw err;
 		next(err, result);
 	});
-
-	});
-
-
+}
 
 exports.delete = function(id, next) {
-
-	commentModel.deleteOne(id, function (err) {
+	commentModel.deleteOne({{_id: id}).exec(function (err) {
 		if (err) throw err;
 		next(err);
 	});

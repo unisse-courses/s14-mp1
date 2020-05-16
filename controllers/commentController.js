@@ -60,7 +60,7 @@ exports.saveComment = function(req, res) {
 
 exports.deleteComment = function (req, res) {
   	var id = req.body.id;
-  	commentModel.delete(id, function (err) {
+  	commentModel.delete(id, function(err) {
   		if (err) {
   			console.log(err.errors);
   			result = {
