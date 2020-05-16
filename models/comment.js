@@ -61,8 +61,11 @@ exports.create = function(object, next) {
 }
 
 
-exports.edit = function(next){
-	commentModel.findOne({_id: id}, function(err){
+exports.edit = function(query, next){
+	commentModel.findOne(query).populate('reviewRef').exec(function(err, result){
+		if (err) throw err;
+		next(err, result);
+	});
 
 	});
 
@@ -70,7 +73,7 @@ exports.edit = function(next){
 
 exports.delete = function(id, next) {
 
-	commentModel.deleteOne({ _id: id }, function (err) {
+	commentModel.deleteOne(id, function (err) {
 		if (err) throw err;
 		next(err);
 	});

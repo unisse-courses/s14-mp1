@@ -95,3 +95,56 @@ exports.addReview = function(req, res) {
 		});
 	}
 };
+
+exports.editReview = function(req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var id = req.body.reviewRef;
+		var content = req.body.commentContent;
+
+		reviewModel.getRevUpdate({_id: id}, function(err, doc){
+			var result;
+			if(err){
+				console.log(err.errors);
+				result = { success: false, message: "Review was not successfully saved!" }
+				res.send(result);
+			} else{
+				doc.reviewContent = content;
+				doc.save();
+				console.log("Successfully saved review!");
+				console.log(doc);
+				result = { success: true, message: "Review saved!" }
+				res.send(result);
+			}
+		});
+	}
+};
+
+exports.deleteReview = function(req, res) {
+	var id = req.body.id;
+	commentModel.remove({reviewRef: id}, function(err) {
+		if(err){
+			console.log(err.errors);
+			result = {
+				success: false,
+				message: "Review and leading comments were not successfully deleted!"
+			}
+			res.send(result);
+		} else{
+			reviewModel.remove({_id: id}, function (err) {
+				if(err){
+					console.log(err.errors);
+					result = { success: false, message: "Review was not successfully deleted!" }
+					res.send(result);
+				} else {
+					console.log("Successfully deleted review!");
+					result = { success: true, message: "Review deleted!" }
+					res.send(result);
+				}
+			});
+	  	}
+	});
+ };
