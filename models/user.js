@@ -20,4 +20,26 @@ var userSchema = new Schema({
 	isBanned: {type: Boolean, required: true}
 });
 
-module.exports = mongoose.model('user', userSchema, 'user');
+const userModel = mongoose.model('user', userSchema, 'user');
+
+exports.getAllLean = function(query) {
+	return userModel.find(query).lean().sort({_id:1}).exec();
+};
+
+exports.count = function(query, next) {
+	userModel.countDocuments(query, function(err, result){
+		if (err) throw err;
+		next(result);
+	});
+};
+
+exports.getAllLean = function(query) {
+	return userModel.find(query).lean().sort({_id:1}).exec();
+};
+
+exports.pullProfile = function(query, next) {
+	userModel.findOne(query).exec(function(err, result){
+		if (err) throw err;
+		next(result);
+	});
+};

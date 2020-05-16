@@ -24,6 +24,17 @@ var reviewSchema = new Schema({
 
 const reviewModel = mongoose.model('review', reviewSchema);
 
+exports.count = function(query, next) {
+	reviewModel.countDocuments(query, function(err, result){
+		if (err) throw err;
+		next(result);
+	});
+};
+
+exports.countAll = function(query) {
+	return reviewModel.countDocuments(query);
+};
+
 exports.getAll = function(query, next) {
 	reviewModel.find(query).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result){
 		var reviewObject = [];

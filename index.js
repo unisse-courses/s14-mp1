@@ -20,7 +20,8 @@ const profileRouter = require('./routes/profileRoutes');
 const loginRouter = require('./routes/loginRoutes');
 const logoutRouter = require('./routes/logoutRoutes');
 const searchRouter = require('./routes/searchRoutes');
-
+const cfAdminRouter = require('./routes/cfAdminRoutes')
+const cfProfileRouter = require('./routes/cfProfileRoutes')
 
 //Import Models
 const collegeModel = require('./models/college');
@@ -77,248 +78,8 @@ app.use('/profile', profileRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/search', searchRouter);
-
-//Backend Routes
-app.get('/cf-admin', function(req,res) {
-	if (req.session.loggedin) {
-		if (req.session.admin) {
-			collegeModel.countDocuments({}, function(err, collegeCount){
-				reviewModel.countDocuments({}, function(err, reviewCount){
-					professorModel.countDocuments({}, function(err, professorCount){
-						userModel.countDocuments({}, function(err, userCount){
-							res.render('backend/admin',{
-								session: req.session,
-								title: 'Dashboard',
-								layout: 'backend',
-								collegeCount: collegeCount,
-								reviewCount: reviewCount,
-								professorCount: professorCount,
-								userCount: userCount,
-								jumbotronImage: '/assets/headers/admin_header.jpg',
-								jumbotronHeader: 'Welcome, Admin!',
-								jumbotronMessage: 'Thank you for taking part in maintaining peace and order within our online platform. This is the backend of the website which has the ultimate power to moderate the contents and features of our Community Forum.',
-								jumbotronLink: '/',
-								jumbotronBtn: 'View Frontend'
-							});
-						});
-					});
-				});
-			});
-		} else {
-			res.render('frontend/error',{
-				session: req.session,
-				error: '403',
-	  			message: "Forbidden Access"
-			});
-		}
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/cf-admin/colleges', async function(req,res) {
-	if (req.session.loggedin) {
-		if (req.session.admin) {
-			const collegeRes = await collegeModel.find({}).lean().exec(); //.exec() returns a Promise, so you can `await` it.
-			const resultPromises = collegeRes.map(async college => { //arrow function is equivalent to function in this context
-		    	const professorCount = await professorModel.countDocuments({ college: college.shortName });
-		    	college.count = professorCount;
-		    	return college;
-		  	});
-		  	const collegeObject = await Promise.all(resultPromises);
-
-			res.render('backend/colleges',{
-				session: req.session,
-				data: collegeObject,
-				title: 'College Panel',
-				layout: 'backend',
-				jumbotronImage: '/assets/headers/admin_header.jpg',
-				jumbotronHeader: 'College Panel',
-				jumbotronMessage: 'Welcome to the college panel. This page has the ultimate power to add, edit, and delete any college page found inside the Community Forum.',
-				jumbotronLink: '/cf-admin',
-				jumbotronBtn: 'Back to Dashboard'
-			});
-		} else{
-			res.render('frontend/error',{
-				session: req.session,
-				error: '403',
-	  			message: "Forbidden Access"
-			});
-		}
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/cf-admin/reviews', async function(req,res) {
-	if (req.session.loggedin) {
-		if (req.session.admin) {
-			const reviewRes = await reviewModel.find({}).populate('profRef').populate('studentRef').sort({_id:-1}).lean().exec(); //.exec() returns a Promise, so you can `await` it.
-			const resultPromises = reviewRes.map(async review => { //arrow function is equivalent to function in this context
-		    	const commentCount = await commentModel.countDocuments({ reviewRef: review._id }).populate('reviewRef').populate('studentRef');
-		    	review.count = commentCount;
-		    	return review;
-		  	});
-		  	const reviewObject = await Promise.all(resultPromises);
-
-		  	commentModel.find({}).populate('reviewRef').populate('studentRef').exec(function(err, comments){
-		  		var commentObject = [];
-
-		 		comments.forEach(function(document){
-					commentObject.push(document.toObject());
-				});
-
-				console.log(commentObject);
-
-		  		res.render('backend/reviews',{
-					session: req.session,
-					review: reviewObject,
-					comment: commentObject,
-					title: 'Review Panel',
-					layout: 'backend',
-					jumbotronImage: '/assets/headers/admin_header.jpg',
-					jumbotronHeader: 'Review Panel',
-					jumbotronMessage: 'Welcome to the Review’s Panel. This page has the capacity to edit any review and also delete certain reviews located in the DLSU Community Forum.',
-					jumbotronLink: '/cf-admin',
-					jumbotronBtn: 'Back to Dashboard'
-				});
-		  	});
-		} else{
-			res.render('frontend/error',{
-				session: req.session,
-				error: '403',
-	  			message: "Forbidden Access"
-			});
-		}
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/cf-admin/professors', async function(req,res) {
-	if (req.session.loggedin) {
-		if (req.session.admin) {
-			const professorRes = await professorModel.find({}).lean().sort({_id:1}).exec(); //.exec() returns a Promise, so you can `await` it.
-			const resultPromises = professorRes.map(async professor => { //arrow function is equivalent to function in this context
-		    	const reviewCount = await reviewModel.countDocuments({ profRef: professor._id });
-		    	professor.count = reviewCount;
-		    	return professor;
-		  	});
-		  	const professorObject = await Promise.all(resultPromises);
-
-		  	collegeModel.find({}).exec(function(err, col){
-				var colleges = [];
-
-				col.forEach(function(document){
-					colleges.push(document.toObject());
-				});
-
-				res.render('backend/professors',{
-					colleges: colleges,
-					session: req.session,
-					professor: professorObject,
-					title: 'Professor Panel',
-					layout: 'backend',
-					jumbotronImage: '/assets/headers/admin_header.jpg',
-					jumbotronHeader: 'Professor Panel',
-					jumbotronMessage: 'Welcome to the Professor Panel. This page is not only for adding and deleting a professor but it also has the capability to edit the professor’s information and the course that they are currently teaching.',
-					jumbotronLink: '/cf-admin',
-					jumbotronBtn: 'Back to Dashboard'
-				});
-			});
-		} else{
-			res.render('frontend/error',{
-				session: req.session,
-				error: '403',
-	  			message: "Forbidden Access"
-			});
-		}
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/cf-admin/users', async function(req,res) {
-	if (req.session.loggedin){
-		if (req.session.admin){
-			const userRes = await userModel.find({}).lean().sort({_id:1}).exec(); //.exec() returns a Promise, so you can `await` it.
-			const resultPromises = userRes.map(async user => { //arrow function is equivalent to function in this context
-		    	const reviewCount = await reviewModel.countDocuments({ studentId: user.studentId });
-		    	user.count = reviewCount;
-		    	return user;
-		  	});
-		  	const userObject = await Promise.all(resultPromises);
-
-			res.render('backend/users',{
-				session: req.session,
-				user: userObject,
-				title: 'User Panel',
-				layout: 'backend',
-				jumbotronImage: '/assets/headers/admin_header.jpg',
-				jumbotronHeader: 'User Panel',
-				jumbotronMessage: 'Welcome to the User Panel. This page has the ability to add, ban and delete a user participating inside the community forum while also having the freedom to update the user information.',
-				jumbotronLink: '/cf-admin',
-				jumbotronBtn: 'Back to Dashboard'
-			});
-		} else{
-			res.render('frontend/error',{
-				session: req.session,
-				error: '403',
-	  			message: "Forbidden Access"
-			});
-		}
-	} else{
-		res.redirect('/login');
-	}
-});
-
-app.get('/cf-profile', function(req, res){
-	if (req.session.loggedin){
-		if (req.session.admin){
-			reviewModel.find({studentId: req.session.idNum}).populate('profRef').populate('studentRef').sort({_id:-1}).exec(function(err,result1) {
-			 	var reviewObject = [];
-
-				result1.forEach(function(document){
-					reviewObject.push(document.toObject());
-				});
-
-				commentModel.find({studentRef: req.session.studentRef}).populate({path: 'reviewRef', model: 'review', populate: { path: 'profRef', model: 'professor'}}).populate('studentRef').sort({_id:-1}).exec(function(err, result2){
-					var commentObject = [];
-					var comment;
-
-					result2.forEach(function(document){
-						comment = document.toObject();
-						comment['profDetails'] = document.reviewRef.profRef.toObject();
-						commentObject.push(comment);
-					});
-
-					res.render('frontend/profile',{
-						layout: 'backend',
-						session: req.session,
-						reviews: reviewObject,
-						comments: commentObject,
-						title: 'Profile',
-						session: req.session,
-						jumbotronImage: '/assets/headers/user_header.jpg',
-						jumbotronHeader: 'Hello ' + req.session.nickname + ',',
-						jumbotronMessage: "This page shows your most recent contribution to the DLSU Community Forum. You may also change your password through the form below.",
-						jumbotronBtn: 'Back to Homepage',
-						jumbotronLink: '/'
-					});
-				});
-			});
-		} else{
-			res.render('frontend/error',{
-				session: req.session,
-				error: '403',
-	  			message: "Forbidden Access"
-			});
-		}
-	} else{
-		res.redirect('/login');
-	}
-});
-
+app.use('/cf-admin', cfAdminRouter);
+app.use('/cf-profile', cfProfileRouter);
 
 //Logical GET Methods
 app.get('/getCourseByCollege', function(req, res) {
@@ -461,12 +222,12 @@ app.post('/auth', function(req,res) {
     	password: req.body.password,
 	};
 
-	userModel.findOne({studentId: user.studentId}, function(err, userQuery){
-		if (err) {
-			console.log(err.errors);
-	    	result = { success: false, message: "Error in DB validation!" }
-	    	res.send(result);
-		}
+	userModel.pullProfile({studentId: user.studentId}, function(userQuery){
+		//if (err) {
+	//		console.log(err.errors);
+	  //  	result = { success: false, message: "Error in DB validation!" }
+	    //	res.send(result);
+	//	}
 		if (userQuery){
 			console.log('User found!');
 			if (bcrypt.compareSync(user.password, userQuery.password)) {

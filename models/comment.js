@@ -21,6 +21,10 @@ var commentSchema = new Schema({
 
 const commentModel = mongoose.model('comment', commentSchema);
 
+exports.countAll = function(query) {
+	return commentModel.countDocuments(query).populate('reviewRef').populate('studentRef');
+};
+
 exports.getAll = function(query, next) {
 	commentModel.find(query).populate('reviewRef').populate('studentRef').exec(function(err, result){
 		if (err) throw err;
@@ -44,9 +48,7 @@ exports.getAllProfile = function(query, next) {
 			comment['profDetails'] = document.reviewRef.profRef.toObject();
 			commentObject.push(comment);
 		});
-	});
-};
 
-exports.countAll = function(query) {
-	return commentModel.countDocuments(query).populate('reviewRef').populate('studentRef');
+		next(commentObject);
+	});
 };

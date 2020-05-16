@@ -6,8 +6,8 @@ exports.find =  function (req, res) {
 	if (req.session.loggedin){
 		var searchItem =  '.*' + req.query.searchItem + '.*';
 
-	  	professorModel.find({profName: {$regex: searchItem, $options: 'i'}}, 15, function(professors){
-	  		collegeModel.find({$or: [ {longName: {$regex: searchItem, $options: 'i'}},{shortName: {$regex: searchItem, $options: 'i'}} ]}, 15, function(colleges){
+	  	professorModel.getLimited({profName: {$regex: searchItem, $options: 'i'}}, 15, function(professors){
+	  		collegeModel.getLimited({$or: [ {longName: {$regex: searchItem, $options: 'i'}},{shortName: {$regex: searchItem, $options: 'i'}} ]}, 15, function(colleges){
 	  			res.render('frontend/searchpage',{
 					session: req.session,
 					professors: professors,
