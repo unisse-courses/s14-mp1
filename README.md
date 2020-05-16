@@ -18,6 +18,8 @@ This project is still **under development** and will be constantly updated once 
 4. Run `node index.js`.
 5. You're ready to go!
 
+# Heroku Link
+- https://dlsu-comforum-mvc-s14gr1.herokuapp.com/
 
 # UML
 
@@ -97,5 +99,3 @@ The web application is anchored towards four key indicators: Security, Simplicit
   - A user can delete his/her own comment.
 
 
-
-[^1]: Feature will be implemented on MP Phase 3 submission.
