@@ -66,3 +66,32 @@ exports.getReview = function(req,res){
 		res.redirect('/login');
 	}
 };
+
+exports.addReview = function(req, res) {
+	if (req.session.banned){
+		var result;
+		result = { success: false, message: "Your account is BANNED!" }
+		res.send(result);
+	} else{
+		var newReview = {
+		  	profRef: req.body.profRef,
+		    profNumber: req.body.profNumber,
+		    profCourse: req.body.profCourse,
+		    studentRef: req.body.studentRef,
+		    studentId: req.body.studentId,
+		    reviewContent: req.body.reviewContent
+	  	};
+		reviewModel.create(newReview, function(err, newReview){
+			var result;
+			if (err) {
+		    	console.log(err.errors);
+		    	result = { success: false, message: "Error in adding review!" }
+		    	res.send(result);
+		    } else {
+		    	console.log(newReview);
+		    	result = { success: true, message: "Successfully added review!" }
+		    	res.send(result);
+		    }
+		});
+	}
+};

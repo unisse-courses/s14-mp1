@@ -333,36 +333,6 @@ app.post('/addProfessor', function(req, res) {
 	});
 });
 
-app.post('/addReview', function(req, res) {
-	if (req.session.banned){
-		var result;
-		result = { success: false, message: "Your account is BANNED!" }
-		res.send(result);
-	} else{
-		var newReview = new reviewModel({
-		  	profRef: req.body.profRef,
-		    profNumber: req.body.profNumber,
-		    profCourse: req.body.profCourse,
-		    studentRef: req.body.studentRef,
-		    studentId: req.body.studentId,
-		    reviewContent: req.body.reviewContent,
-	  	});
-
-	  	newReview.save(function(err, review) {
-			var result;
-			if (err) {
-		    	console.log(err.errors);
-		    	result = { success: false, message: "Error in adding review!" }
-		    	res.send(result);
-		    } else {
-		    	console.log(review);
-		    	result = { success: true, message: "Successfully added review!" }
-		    	res.send(result);
-		    }
-		});
-	}
-});
-
 app.post('/addComment', function(req, res) {
 	if (req.session.banned){
 		var result;

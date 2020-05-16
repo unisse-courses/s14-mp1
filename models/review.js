@@ -47,7 +47,6 @@ exports.getAll = function(query, next) {
 	});
 };
 
-
 exports.getAllLean = function(query) {
 	return reviewModel.find(query).populate('profRef').populate('studentRef').sort({_id:-1}).lean().exec();
 };
@@ -82,5 +81,12 @@ exports.getProf = function(profRef, next) {
 		});
 
 		next(reviewObject);
+	});
+};
+
+exports.create = function(object, next) {
+	const newReview = new reviewModel(object);
+	newReview.save(function(err, review) {
+		next(err, newReview);
 	});
 };
