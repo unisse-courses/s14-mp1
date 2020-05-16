@@ -19,6 +19,8 @@ const reviewsRouter = require('./routes/reviewsRoutes');
 const profileRouter = require('./routes/profileRoutes');
 const loginRouter = require('./routes/loginRoutes');
 const logoutRouter = require('./routes/logoutRoutes');
+const searchRouter = require('./routes/searchRoutes');
+
 
 //Import Models
 const collegeModel = require('./models/college');
