@@ -77,6 +77,7 @@ exports.getCollege = function(query, next) {
 };
 
 exports.deleteCollege = function(query, next) {
+	collegeModel.deleteOne(query, function(err) {
 		if (err) throw error;
 		next(err);
 	});
