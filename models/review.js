@@ -86,7 +86,7 @@ exports.getProf = function(profRef, next) {
 
 exports.create = function(object, next) {
 	const newReview = new reviewModel(object);
-	newReview.save(function(err, review) {
+	newReview.save(function(err, newReview) {
 		next(err, newReview);
 	});
 };
