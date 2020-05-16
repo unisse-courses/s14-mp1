@@ -86,7 +86,21 @@ exports.getProf = function(profRef, next) {
 
 exports.create = function(object, next) {
 	const newReview = new reviewModel(object);
-	newReview.save(function(err, review) {
+	newReview.save(function(err, newReview) {
 		next(err, newReview);
+	});
+};
+
+exports.getRevUpdate = function(query, next) {
+	reviewModel.findOne(query).populate('profRef').populate('studentRef').exec(function(err, result){
+		if (err) throw err;
+		next(err, result);
+	});
+};
+
+exports.remove = function(query, next) {
+	reviewModel.deleteOne(query, function(err) {
+		if (err) throw err;
+		next(err);
 	});
 };

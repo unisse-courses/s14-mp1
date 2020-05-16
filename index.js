@@ -360,33 +360,6 @@ app.post('/addComment', function(req, res) {
 	}
 });
 
-app.post('/savePost', function(req, res) {
-	if (req.session.banned){
-		var result;
-		result = { success: false, message: "Your account is BANNED!" }
-		res.send(result);
-	} else{
-		var id = req.body.reviewRef;
-		var content = req.body.commentContent;
-
-		reviewModel.findOne({_id: id}, function(err, doc){
-			var result;
-			if(err){
-				console.log(err.errors);
-				result = { success: false, message: "Review was not successfully saved!" }
-				res.send(result);
-			} else{
-				doc.reviewContent = content;
-				doc.save();
-				console.log("Successfully saved review!");
-				console.log(doc);
-				result = { success: true, message: "Review saved!" }
-				res.send(result);
-			}
-		});
-	}
-});
-
 app.post('/saveComment', function(req, res) {
 	if (req.session.banned){
 		var result;
@@ -415,7 +388,6 @@ app.post('/saveComment', function(req, res) {
 	}
 });
 
-
 app.post('/editProfessor', function (req,res) {
 	var id = req.body.id;
 	var name = req.body.name;
@@ -443,30 +415,7 @@ app.post('/editProfessor', function (req,res) {
 		}
 	});
 });
-/*
-app.post('/editCollege', function(req, res) {
-	var id = req.body.id;
-	var short = req.body.short;
-	var long = req.body.long;
 
-	collegeModel.findOne({_id: id}, function (err, data) {
-		var result;
-		if (err){
-			console.log(err.errors)
-			result = { success: false, message: "College was not successfully saved!" }
-			res.send(result);
-		}
-		else{
-			data.longName = long;
-			data.shortName = short;
-			data.save();
-			console.log(data);
-			result = { success: true, message: "College saved!" }
-			res.send(result);
-		}
-	});
-});
-*/
 app.post('/banUser', function (req,res) {
 	var id = req.body.id;
 	console.log(id);
@@ -512,33 +461,6 @@ app.post('/deleteProf', function(req, res) {
 			});
 	  	}
 	})
- });
-
-
-app.post('/deletePost', function(req, res) {
-	var id = req.body.id;
-	commentModel.deleteMany({ reviewRef: id}, function (err) {
-		if(err){
-			console.log(err.errors);
-			result = {
-				success: false,
-				message: "Review and leading comments were not successfully deleted!"
-			}
-			res.send(result);
-		} else{
-			reviewModel.deleteOne({ _id: id }, function (err) {
-				if(err){
-					console.log(err.errors);
-					result = { success: false, message: "Review was not successfully deleted!" }
-					res.send(result);
-				} else {
-					console.log("Successfully deleted review!");
-					result = { success: true, message: "Review deleted!" }
-					res.send(result);
-				}
-			});
-	  	}
-	});
  });
 
 app.post('/deleteComment', function (req, res) {

@@ -51,3 +51,9 @@ exports.getAllProfile = function(query, next) {
 exports.countAll = function(query) {
 	return commentModel.countDocuments(query).populate('reviewRef').populate('studentRef');
 };
+
+exports.remove = function(query, next) {
+	commentModel.deleteMany(query, function (err) {
+		next(err);
+	});
+};
