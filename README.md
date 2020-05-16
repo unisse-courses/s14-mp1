@@ -34,7 +34,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 
 - Mandatory user registration.
 - Community administrators, moderators, and contributors.
-- Anti-discriminatory community guidelines (no cursing, etc). [^1]
+- Anti-discriminatory community guidelines (no cursing, etc).
 
 ## Security 
 
@@ -44,7 +44,7 @@ The web application is anchored towards four key indicators: Security, Simplicit
 -   Convenient changing of password.
 -   Convenient post sectioning (college, course, professor).
 -   Convenient post and comment management.
--   Convenient prof searching and filtering. [^1]
+-   Convenient prof searching and filtering. 
 -   College sorted professors.
 
 ## Reliability
