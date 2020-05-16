@@ -1,0 +1,6 @@
+Update any instance that calls that following functions
+EXAMPLE: "/old" -> "/new"
+
+"/addReview" -> "/reviews/add" 
+"/savePost" -> "/reviews/edit"
+"/deletePost" -> "/reviews/delete"

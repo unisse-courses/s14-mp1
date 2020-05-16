@@ -100,3 +100,10 @@ exports.getQuickView = function(sample, next) {
 		next(result)
 	});
 };
+
+exports.create = function(object, next) {
+	const newProf = new professorModel(object);
+	newProf.save(function(err, review) {
+		next(err, newProf);
+	});
+};
