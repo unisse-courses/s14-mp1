@@ -21,6 +21,9 @@ This project is still **under development** and will be constantly updated once 
 # Heroku Link
 - https://dlsu-comforum-mvc-s14gr1.herokuapp.com/
 
+# Repository without MVC
+- https://github.com/Ryakeee/FINALMERGE
+
 # UML
 
 ![Revised UML](screens/UML_Revised.png)
